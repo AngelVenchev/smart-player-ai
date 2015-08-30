@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartPlayer", "SmartPlayer\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartPlayer.Data", "SmartPlayer.Data\SmartPlayer.Data.csproj", "{51458521-AB4E-4192-9251-15B4CF4B1476}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartPlayer.Core", "SmartPlayer.Core\SmartPlayer.Core.csproj", "{9029BDDF-FA4C-48FE-963C-96A6BA8F061F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{51458521-AB4E-4192-9251-15B4CF4B1476}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51458521-AB4E-4192-9251-15B4CF4B1476}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51458521-AB4E-4192-9251-15B4CF4B1476}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9029BDDF-FA4C-48FE-963C-96A6BA8F061F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9029BDDF-FA4C-48FE-963C-96A6BA8F061F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9029BDDF-FA4C-48FE-963C-96A6BA8F061F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9029BDDF-FA4C-48FE-963C-96A6BA8F061F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

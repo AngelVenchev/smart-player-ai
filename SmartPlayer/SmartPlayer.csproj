@@ -286,9 +286,12 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartPlayer.Data\SmartPlayer.Data.csproj">
-      <Project>{51458521-ab4e-4192-9251-15b4cf4b1476}</Project>
-      <Name>SmartPlayer.Data</Name>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SmartPlayer.Core\SmartPlayer.Core.csproj">
+      <Project>{9029bddf-fa4c-48fe-963c-96a6ba8f061f}</Project>
+      <Name>SmartPlayer.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

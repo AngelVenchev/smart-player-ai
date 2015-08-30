@@ -15,9 +15,7 @@ namespace SmartPlayer.Validators
     {
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
-            //string fileExtension = Path.GetExtension(FileUpload1.FileName);
-            if (!actionContext.Request.Content.IsMimeMultipartContent() /*|| 
-                Path.GetExtension(actionContext.Request.Content.Headers.First().Value) != "mp3"*/)
+            if (!actionContext.Request.Content.IsMimeMultipartContent())
             {
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
             }

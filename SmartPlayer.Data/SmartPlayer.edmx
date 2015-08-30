@@ -28,7 +28,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="Guid" Type="nvarchar" MaxLength="36" Nullable="false" />
+          <Property Name="Guid" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Grade" Type="float" Nullable="false" />
         </EntityType>
         <EntityType Name="UserSongVote">
@@ -117,7 +117,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Guid" Type="String" Nullable="false" MaxLength="36" FixedLength="false" Unicode="true" />
+          <Property Name="Guid" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Grade" Type="Double" Nullable="false" />
           <NavigationProperty Name="UserSongVotes" Relationship="SmartPlayerModel.FK_UserSongVote_Song" FromRole="Song" ToRole="UserSongVote" />
         </EntityType>
