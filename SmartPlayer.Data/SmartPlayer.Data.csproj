@@ -66,6 +66,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SmartPlayer.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Song.cs">
+      <DependentUpon>SmartPlayer.tt</DependentUpon>
+    </Compile>
+    <Compile Include="User.cs">
+      <DependentUpon>SmartPlayer.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserSongVote.cs">
+      <DependentUpon>SmartPlayer.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="SmartPlayer.edmx">
