@@ -25,5 +25,8 @@ namespace SmartPlayer.Data
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Song> Songs { get; set; }
+        public virtual DbSet<UserSongVote> UserSongVotes { get; set; }
     }
 }
