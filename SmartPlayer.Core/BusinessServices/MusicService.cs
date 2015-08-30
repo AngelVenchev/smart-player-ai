@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Configuration.Assemblies;
 using System.Configuration;
 using System.IO;
+using SmartPlayer.Core.DTOs;
 
 namespace SmartPlayer.Core.BusinessServices
 {
@@ -28,13 +29,32 @@ namespace SmartPlayer.Core.BusinessServices
                 Guid = guid,
                 Grade = songGrade
             };
-            SmartPlayerEntities context = new SmartPlayerEntities();
 
+            SmartPlayerEntities context = new SmartPlayerEntities();
             MusicRepository repo = new MusicRepository(context);
 
             repo.Create(song);
 
             context.Dispose(); // TODO find a better way to handle dbcontext
+        }
+
+        public List<SongDto> GetAllSongs()
+        {
+            SmartPlayerEntities context = new SmartPlayerEntities();
+
+            MusicRepository repo = new MusicRepository(context);
+
+            var allSongs = repo.GetAll()
+                .Select(x => new SongDto
+                {
+                    Id = x.Id,
+                    SongName = x.Name
+                })
+                .ToList();
+
+            context.Dispose();
+
+            return allSongs;
         }
     }
 }

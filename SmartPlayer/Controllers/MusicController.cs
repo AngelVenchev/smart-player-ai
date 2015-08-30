@@ -1,4 +1,5 @@
 ﻿using SmartPlayer.Core.BusinessServices;
+using SmartPlayer.Core.DTOs;
 using SmartPlayer.Validators;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,10 @@ using System.Web.Http;
 
 namespace SmartPlayer.Controllers
 {
+    [RoutePrefix("api/Music")]
     public class MusicController : ApiController
     {
-        [Route("api/Music/Upload")]
+        [Route("Upload")]
         [HttpPost]
         [ValidateMimeMultipartContentFilter]
         public async Task UploadSingleFile()
@@ -28,6 +30,15 @@ namespace SmartPlayer.Controllers
             string fileGuid = Path.GetFileName(streamProvider.FileData.First().LocalFileName);
 
             service.Store(fileOriginalName, fileGuid);
+        }
+
+        [Route("GetAll")]
+        [HttpGet]
+        public async Task<List<SongDto>> GetAll()
+        {
+            MusicService service = new MusicService();
+            var allSongs = service.GetAllSongs();
+            return allSongs;
         }
     }
 }
