@@ -2,6 +2,7 @@
 using SmartPlayer.Validators;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -13,14 +14,13 @@ namespace SmartPlayer.Controllers
 {
     public class MusicController : ApiController
     {
-        const string ServerUploadFolder = @"D:\Dropbox\SmartPlayerFileServer";
-
         [Route("api/Music/Upload")]
         [HttpPost]
         [ValidateMimeMultipartContentFilter]
         public async Task UploadSingleFile()
         {
-            var streamProvider = new MultipartFormDataStreamProvider(ServerUploadFolder);
+            var serverUploadFolder = ConfigurationManager.AppSettings["MediaServerBaseUrl"];
+            var streamProvider = new MultipartFormDataStreamProvider(serverUploadFolder);
             await Request.Content.ReadAsMultipartAsync(streamProvider);
 
             MusicService service = new MusicService();

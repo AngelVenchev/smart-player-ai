@@ -1,4 +1,5 @@
 ﻿using SmartPlayer.Core.Repositories;
+using SmartPlayer.Core.SongAnalyzer;
 using SmartPlayer.Data;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,9 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration.Assemblies;
+using System.Configuration;
+using System.IO;
 
 namespace SmartPlayer.Core.BusinessServices
 {
@@ -13,22 +17,23 @@ namespace SmartPlayer.Core.BusinessServices
     {
         public void Store(string originalFileName, string guid)
         {
+            string mediaServerUrlBase = ConfigurationManager.AppSettings["MediaServerBaseUrl"];
+            string fullName = Path.Combine(mediaServerUrlBase, guid);
+
+            double songGrade = Analyzer.GetGradeFor(fullName);
+
             Song song = new Song()
             {
                 Name = originalFileName,
                 Guid = guid,
-                Grade = 0.1 // TODO: Implement song grading
+                Grade = songGrade
             };
             SmartPlayerEntities context = new SmartPlayerEntities();
+
             MusicRepository repo = new MusicRepository(context);
-            try
-            {
-                repo.Create(song);
-            }
-            catch (DbEntityValidationException ex)
-            {
-                var a = ex;
-            }
+
+            repo.Create(song);
+
             context.Dispose(); // TODO find a better way to handle dbcontext
         }
     }
