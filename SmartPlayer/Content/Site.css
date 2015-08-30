@@ -35,6 +35,12 @@ textarea {
     float: right;
 }
 
+.uploadFiles .errorMessage {
+    display: none;
+    color: red;
+    font-size: 14px;
+}
+
 .startPlayer {
     margin: 15px 0;
     display: inline-block;

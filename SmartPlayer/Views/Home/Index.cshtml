@@ -11,8 +11,9 @@
               id="ajaxUploadForm" novalidate="novalidate">
             <fieldset>
                 <legend>Upload Form</legend>
-                <input type="file" id="fileInput" name="file">
-                <input type="submit" value="Upload" id="ajaxUploadButton" class="btn" onclick="handleFiles(event)">
+                <input type="file" id="fileInput" name="fileInput" onchange="handleFiles(files)">
+                <div class="errorMessage"></div>
+                <input type="submit" value="Upload" id="ajaxUploadButton" class="btn">
             </fieldset>
         </form>
     </div>
