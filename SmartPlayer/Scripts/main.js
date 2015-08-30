@@ -2,19 +2,10 @@
     source: ["c++", "java", "php", "coldfusion", "javascript", "asp", "ruby", "python"]
 });
 
+function handleFiles(event) {
+    console.log("Files:", event);
 
-function handleFiles(files) {
-    var file = files[0];
-    var reader = new FileReader();
-    reader.onload = onFileReadComplete;
-    reader.readAsText(file);
 }
-  
-function onFileReadComplete(event) { 
-    console.log("Event:", event);
-}
-
-
 
 function likeCurrentSong() {
     console.log("LikeCurrentSong");

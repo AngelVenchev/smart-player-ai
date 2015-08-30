@@ -1,18 +1,21 @@
 ﻿@section scripts {
     @Scripts.Render("~/Scripts/main.js")
-
-    <script>
-        // document ready
-        myClass(@Html.Raw(Json.Encode(Model)))
-    </script>
 }
 <div class="jumbotron">
     <div class="topNav">
         <div class="smartPlayerLogo"></div>
         <h1>SmartPlayer</h1>
+</div>  
+    <div class="uploadFiles">
+        <form enctype="multipart/form-data" method="post" action="http://localhost/api/Music/Upload" id="ajaxUploadForm" novalidate="novalidate">
+            <fieldset>
+                <legend>Upload Form</legend>
+                <input type="file" id="fileInput" name="fileInput">
+                <input type="submit" value="Upload" id="ajaxUploadButton" class="btn" onclick="handleFiles(event)">
+            </fieldset>
+        </form>
 
-        <input type="file" id="fileupload" name="files[]" onchange="handleFiles(files)">
-    </div>  
+    </div>
 
     <div class="startPlayer">
         <p>Choose a song and start listening to the perfect music for your mood!</p>
@@ -31,10 +34,5 @@
             <div class="label">Next Song</div>
         </button>
         <p class="nextSongName">Next Song</p>
-    </div>
-</div>
-<div class="row">    
-    <div>
-        @ViewBag.validSongs;
     </div>
 </div>

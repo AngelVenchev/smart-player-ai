@@ -23,12 +23,16 @@ textarea {
     width:120px;
     height: 120px;
     background: green;
-    background: url("../images/logo.png") no-repeat;
+    background: url("../Content/images/logo.png") no-repeat;
 }
 
 .topNav h1 {
     float: left;
     font-size: 45px;
+}
+
+.uploadFiles {
+    float: right;
 }
 
 .startPlayer {
