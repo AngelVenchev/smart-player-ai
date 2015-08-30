@@ -15,3 +15,29 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+
+.topNav .smartPlayerLogo {
+    float: left;
+    width:120px;
+    height: 120px;
+    background: green;
+    background: url("../images/logo.png") no-repeat;
+}
+
+.topNav h1 {
+    float: left;
+    font-size: 45px;
+}
+
+.startPlayer {
+    margin: 15px 0;
+    display: inline-block;
+    /*display: none;*/
+}
+
+.player {
+    display: none;
+    /*display: inline-block;*/
+}
