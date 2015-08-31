@@ -21,7 +21,7 @@ namespace SmartPlayer.Controllers
         [ValidateMimeMultipartContentFilter]
         public async Task UploadSingleFile()
         {
-            var serverUploadFolder = ConfigurationManager.AppSettings["MediaServerBaseUrl"];
+            var serverUploadFolder = ConfigurationManager.AppSettings["MediaServerSaveBaseUrl"];
             var streamProvider = new MultipartFormDataStreamProvider(serverUploadFolder);
             await Request.Content.ReadAsMultipartAsync(streamProvider);
 
@@ -39,6 +39,15 @@ namespace SmartPlayer.Controllers
             MusicService service = new MusicService();
             var allSongs = service.GetAllSongs();
             return allSongs;
+        }
+
+        [Route("Next")]
+        [HttpPost]
+        public async Task<PlayerSongDto> GetNextSong(NextSongDto nextSongRequest)
+        {
+            MusicService service = new MusicService();
+            var song = service.GetNextSong(nextSongRequest);
+            return song;
         }
     }
 }

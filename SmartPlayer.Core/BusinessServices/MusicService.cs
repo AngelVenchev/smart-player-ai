@@ -18,7 +18,7 @@ namespace SmartPlayer.Core.BusinessServices
     {
         public void Store(string originalFileName, string guid)
         {
-            string mediaServerUrlBase = ConfigurationManager.AppSettings["MediaServerBaseUrl"];
+            string mediaServerUrlBase = ConfigurationManager.AppSettings["MediaServerSaveBaseUrl"];
             string fullName = Path.Combine(mediaServerUrlBase, guid);
 
             double songGrade = Analyzer.GetGradeFor(fullName);
@@ -55,6 +55,32 @@ namespace SmartPlayer.Core.BusinessServices
             context.Dispose();
 
             return allSongs;
+        }
+
+        public PlayerSongDto GetNextSong(NextSongDto songRequest)
+        {
+            SmartPlayerEntities context = new SmartPlayerEntities();
+
+            MusicRepository repo = new MusicRepository(context);
+
+            // Add recommendation system logic
+            var currentSong = repo.GetAll().First(x => x.Id == songRequest.CurrentSongId);
+
+            var selectedSong = repo.GetAll() 
+                .Where(x => !songRequest.PlayedSongIds.Contains(x.Id))
+                .OrderBy(x => Math.Abs(currentSong.Grade - x.Grade))
+                .First();
+
+            PlayerSongDto song = new PlayerSongDto()
+            {
+                Id = selectedSong.Id,
+                Name = selectedSong.Name,
+                Url = ConfigurationManager.AppSettings["MediaServerLoadBaseUrl"] + selectedSong.Guid
+            };
+
+            context.Dispose();
+
+            return song;
         }
     }
 }
