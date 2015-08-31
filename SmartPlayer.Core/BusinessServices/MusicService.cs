@@ -82,5 +82,22 @@ namespace SmartPlayer.Core.BusinessServices
 
             return song;
         }
+
+        public void RateSong(SongRatingDto rating, string userName)
+        {
+            SmartPlayerEntities context = new SmartPlayerEntities();
+
+            UserRepository userRepo = new UserRepository(context);
+
+            User currentUser = userRepo.GetAll().First(x => x.Email == userName);
+
+            context.UserSongVotes.Add(new UserSongVote()
+                {
+                    Rating = rating.Rating,
+                    SongId = rating.SongId,
+                    UserId = currentUser.Id
+                });
+            context.SaveChanges();
+        }
     }
 }
