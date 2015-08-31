@@ -16,9 +16,11 @@ textarea {
     max-width: 280px;
 }
 
-
-
 .topNav .smartPlayerLogo {
+    float: left;
+}
+
+.topNav .smartPlayerLogo .logo {
     float: left;
     width:120px;
     height: 120px;
@@ -28,11 +30,26 @@ textarea {
 
 .topNav h1 {
     float: left;
-    font-size: 45px;
+    font-size: 42px;
+    line-height: 80px;
+}
+
+.topNav .accountInfo {
+    float: right;
+}
+
+.topNav .logInBtn {
+    border-right: 1px solid black;
+}
+
+.topNav .logInBtn,
+.topNav .registerBtn {
+    font-size: 18px;
+    padding: 0 6px 0 2px;
 }
 
 .uploadFiles {
-    float: right;
+
 }
 
 .uploadFiles .errorMessage {
@@ -41,8 +58,14 @@ textarea {
     font-size: 14px;
 }
 
+.uploadFiles input {
+    margin: 15px;
+}
+
 .startPlayer {
     margin: 15px 0;
+    float: left;
+    padding: 25px;
     display: inline-block;
     /*display: none;*/
 }
@@ -50,4 +73,56 @@ textarea {
 .player {
     display: none;
     /*display: inline-block;*/
+}
+
+.registrationForm,
+.logInForm {
+    margin-top: 20px;
+    margin: 0 auto;
+    width: 247px;
+}
+
+.registrationForm input,
+.logInForm input {
+    display: block;
+    margin: 15px 0;
+    font-size: 20px;
+}
+
+.registrationForm .registerBtn,
+.logInForm .logInBtn {
+    color: #fff;
+    background-color: #14c5f6;
+    border-radius: 5px;
+    border: 1px solid #1cb1d3;
+    line-height: 40px;
+    width: 247px;
+}
+
+.topNav .userName,
+.topNav .logOutBtn{
+    display: none;
+}
+
+body.loggedUser .topNav .userName,
+body.loggedUser .topNav .logOutBtn {
+    display: inline-block;
+}
+
+body.loggedUser .topNav .logInBtn,
+body.loggedUser .topNav .registerBtn {
+    display: none;
+}
+
+.topNav .logInBtn,
+.topNav .registerBtn {
+    font-size: 18px;
+    padding: 0 6px 0 2px;
+}
+
+body.loggedUser .topNav .userName {
+    font-size: 15px;
+}
+
+body.loggedUser .topNav .logOutBtn {
 }

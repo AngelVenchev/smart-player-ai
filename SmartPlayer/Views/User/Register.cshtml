@@ -1,0 +1,14 @@
+﻿@section scripts {
+    @Scripts.Render("~/Scripts/User/LogInAndRegistration.js")
+}
+
+@{
+    ViewBag.Title = "Registration";
+}
+
+<div class="registrationForm">
+    <input class="emailInput" type="text" value="" placeholder="Email">
+    <input class="passwordInput" type="password" value="" placeholder="Password">
+    <input class="confirmPasswordInput" type="password" value="" placeholder="Confirm Password">
+    <input class="registerBtn" type="submit" value="Register" onclick="register()">
+</div>

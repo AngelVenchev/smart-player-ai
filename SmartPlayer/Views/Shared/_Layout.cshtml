@@ -6,16 +6,31 @@
     <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/Scripts/User/LogOut.js")
 </head>
 <body>    
     <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - A&D ASP.NET Application</p>
-        </footer>
-    </div>
+        <div class="container body-content">
+            <div class="topNav">
+                <div class="smartPlayerLogo">
+                    <div class="logo"></div>
+                    <h1>SmartPlayer</h1>
+                </div>
+                <div class="accountInfo">
+                    <a href="@(Url.Action("Login", "User"))" class="logInBtn">Log In</a>
+                    <a href="@(Url.Action("Register", "User"))" class="registerBtn">Register</a>
 
+                    <div class="userName"></div>
+                    <button class="logOutBtn" onclick="logout()">Log Out</button>
+                </div>
+            </div>
+        </div>
+        @RenderBody()        
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - A&D ASP.NET Application</p>
+            </footer>
+        </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jquery-ui")
     @Scripts.Render("~/bundles/bootstrap")
