@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="SmartPlayerModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="SmartPlayerModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AspNetUsers">
           <Key>
             <PropertyRef Name="Id" />
@@ -38,6 +38,7 @@
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="SongId" Type="int" Nullable="false" />
+          <Property Name="Rating" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_UserSongVote_AspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
@@ -130,6 +131,7 @@
           <Property Name="SongId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="AspNetUser" Relationship="SmartPlayerModel.FK_UserSongVote_AspNetUsers" FromRole="UserSongVote" ToRole="AspNetUser" />
           <NavigationProperty Name="Song" Relationship="SmartPlayerModel.FK_UserSongVote_Song" FromRole="UserSongVote" ToRole="Song" />
+          <Property Name="Rating" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="FK_UserSongVote_AspNetUsers">
           <End Type="SmartPlayerModel.User" Role="AspNetUser" Multiplicity="1" />
@@ -192,6 +194,7 @@
           <EntitySetMapping Name="UserSongVotes">
             <EntityTypeMapping TypeName="SmartPlayerModel.UserSongVote">
               <MappingFragment StoreEntitySet="UserSongVote">
+                <ScalarProperty Name="Rating" ColumnName="Rating" />
                 <ScalarProperty Name="SongId" ColumnName="SongId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />

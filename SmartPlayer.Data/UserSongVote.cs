@@ -17,6 +17,7 @@ namespace SmartPlayer.Data
         public int Id { get; set; }
         public string UserId { get; set; }
         public int SongId { get; set; }
+        public int Rating { get; set; }
     
         public virtual User AspNetUser { get; set; }
         public virtual Song Song { get; set; }
