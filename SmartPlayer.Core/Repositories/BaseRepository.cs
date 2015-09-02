@@ -114,11 +114,15 @@ namespace SmartPlayer.Core.Repositories
             this.SaveChanges();
         }
 
-        public IList<TEntity> GetAll()
-        {
-            return this.ObjectSet.ToList();
-        }
+        //public IList<TEntity> GetAll()
+        //{
+        //    return this.ObjectSet.ToList();
+        //}
 
+        public IQueryable<TEntity> GetAll()
+        {
+            return this.ObjectSet;
+        }
         public int Delete(TEntity entity)
         {
             DeleteWithoutSave(entity);

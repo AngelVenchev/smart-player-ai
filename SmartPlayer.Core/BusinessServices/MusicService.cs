@@ -66,7 +66,7 @@ namespace SmartPlayer.Core.BusinessServices
             // Add recommendation system logic
             var currentSong = repo.GetAll().First(x => x.Id == songRequest.CurrentSongId);
 
-            var selectedSong = repo.GetAll() 
+            var selectedSong = repo.GetAll()
                 .Where(x => !songRequest.PlayedSongIds.Contains(x.Id))
                 .OrderBy(x => Math.Abs(currentSong.Grade - x.Grade))
                 .First();
