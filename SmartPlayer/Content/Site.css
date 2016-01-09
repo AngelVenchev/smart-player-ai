@@ -64,17 +64,40 @@ textarea {
 
 .startPlayer {
     margin: 15px 0;
-    float: left;
     padding: 25px;
     display: inline-block;
     /*display: none;*/
 }
 
+.typeahead {
+  width: 396px;
+  height: 30px;
+  padding: 8px 12px;
+  font-size: 15px;
+  line-height: 30px;
+  border: 2px solid #ccc;
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+  outline: none;
+}
+
+.tt-menu {
+    width: 422px;
+    margin: 2px 0;
+    padding: 8px 0;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+
 .player {
     display: none;
     /*display: inline-block;*/
 }
-
+    
 .registrationForm,
 .logInForm {
     margin-top: 20px;
