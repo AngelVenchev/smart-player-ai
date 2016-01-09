@@ -5,18 +5,20 @@
     var password = $('.registrationForm .passwordInput').val();
     var confirmPassword = $('.registrationForm .confirmPasswordInput').val();
     var data = {
-        "Email": email,
-        "Password": password,
-        "ConfirmPassword": confirmPassword
+        Email: email,
+        Password: password,
+        ConfirmPassword: confirmPassword
     }
     var url = "http://localhost/api/Account/Register";
 
     $.ajax({
         type: "POST",
         url: url,
-        data: data,
+        data: JSON.stringify(data),
+        contentType: 'application/json; charset=utf-8',
         success: function () {
-            console.log("Successfull Registration")
+            console.log("Successfull Registration");
+            //openHomePage();
         },
         dataType: "application/json"
     });
@@ -28,10 +30,11 @@ function getToken() {
     var email = $('.logInForm .emailInput').val();
     var password = $('.logInForm .passwordInput').val();
     var data = {
-        "Username": email,
-        "Password": password,
-        "grant_type": "password"
+        Username: email,
+        Password: password,
+        grant_type: "password"
     }
+    console.log("data", data);
     var url = "http://localhost/token";
     $.ajax({
         type: "POST",
