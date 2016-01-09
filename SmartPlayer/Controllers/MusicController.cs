@@ -41,6 +41,15 @@ namespace SmartPlayer.Controllers
             return allSongs;
         }
 
+        [Route("GetSong")]
+        [HttpGet]
+        public async Task<PlayerSongDto> GetSong(int songId)
+        {
+            MusicService service = new MusicService();
+            var song = service.GetSong(songId);
+            return song;
+        }
+
         [Route("Next")]
         [HttpPost]
         public async Task<PlayerSongDto> GetNextSong(NextSongDto nextSongRequest)
@@ -57,7 +66,7 @@ namespace SmartPlayer.Controllers
         {
             MusicService service = new MusicService();
             var username = this.User.Identity.Name;
-            var song = service.RateSong(rating, username);
+            service.RateSong(rating, username);
         }
     }
 }

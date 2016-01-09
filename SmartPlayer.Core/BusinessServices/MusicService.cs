@@ -83,6 +83,25 @@ namespace SmartPlayer.Core.BusinessServices
             return song;
         }
 
+        public PlayerSongDto GetSong(int songId)
+        {
+            SmartPlayerEntities context = new SmartPlayerEntities();
+            MusicRepository repo = new MusicRepository(context);
+
+            var requestedSong = repo.GetAll().First(x => x.Id == songId);
+
+            PlayerSongDto song = new PlayerSongDto()
+            {
+                Id = requestedSong.Id,
+                Name = requestedSong.Name,
+                Url = ConfigurationManager.AppSettings["MediaServerLoadBaseUrl"] + requestedSong.Guid
+            };
+
+            context.Dispose();
+
+            return song;
+        }
+
         public void RateSong(SongRatingDto rating, string userName)
         {
             SmartPlayerEntities context = new SmartPlayerEntities();
