@@ -8,41 +8,31 @@ localStorage.setItem("baseUrl", baseUrl);
 
 function attachEventListeners() {
     $("#rateSongBtn").click("rateSong");
+    $("#nextSongButton").click(playNextSong);
 
-    var songs = getAllSongsNames();
+    var songs = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: baseUrl + "/api/Music/SearchSong?s=%QUERY%",
+            filter: function (x) {
+                return $.map(x, function (item) {
+                    return { id: item.Id, value: item.SongName };
+                });
+            },
+            wildcard: '%QUERY%'
+        }
+    });
+
     $('.typeahead').typeahead({
         hint: true,
         highlight: true,
-        minLength: 1,
-        valueKey: "Id",
-        displayKey: 'Name'
-    },
-    {
-        name: 'songs',
-        source: substringMatcher(songs)
+        minLength: 1
+    }, {
+        display: "value",
+        source: songs
     });
-};
 
-var substringMatcher = function (strs) {
-    return function findMatches(q, cb) {
-        var matches, substringRegex;
-
-        // an array that will be populated with substring matches
-        matches = [];
-
-        // regex used to determine if a string contains the substring `q`
-        substrRegex = new RegExp(q, 'i');
-
-        // iterate through the pool of strings and for any string that
-        // contains the substring `q`, add it to the `matches` array
-        $.each(strs, function (i, str) {
-            if (substrRegex.test(str)) {
-                matches.push(str);
-            }
-        });
-
-        cb(matches);
-    };
 };
 
 function getAllSongs() {
@@ -67,125 +57,87 @@ function getAllSongs() {
     return allSongs;
 }
 
-function getAllSongsNames() {
-    var songsNames = [];
-    var allSongs = getAllSongs();
-    for (var song in allSongs) {
-        songsNames.push(allSongs[song].SongName);
-    }
-    console.log("allSongsNames: ", songsNames);
-    return songsNames;
-}
-
-$('input').on('change', function () {
-    console.log($(this).val());
+$('.typeahead').bind('typeahead:select', function (ev, suggestion) {
+    playSelectedSong(suggestion.id)
 });
 
 // Call GetSong with selected song Id
-function playSelectedSong() {
-    var selectedSong = $(".typeahead.tt-input").val();
-    console.log("selectedSong", selectedSong);
-    
-    var songId;
-    var allSongs = getAllSongs();
-    for (var i = 0; i < allSongs.length; i++) {
-        if (allSongs[i].SongName == selectedSong) {
-            songId = allSongs[i].Id;
-        }
-    }
-
+function playSelectedSong(songId) {
     var url = "http://localhost/api/Music/GetSong/?songId=" + songId;
     $.ajax({
         type: "GET",
         url: url,
-        success: function (data) {
-            console.log("Data: ", data);
-            var songId = data.Id;
-            var songName = data.Name;
-            var src = data.Url;
-            var audioSource = $("audio source");
-            audioSource.attr("src", src);
-            var audio = $("audio");
-            audio[0].load();
-            audio[0].play();
-            sessionStorage.setItem('currentSong', { "songName": songName, "songId": songId });
-            console.log("currentSong:", sessionStorage.currentSong);
-        },
+        success: playSong,
         error: function (err) {
             console.log("Eror: ");
         }
     });
 }
 
+function playSong(playerSong) {
+    var audioSource = $("audio source");
+    audioSource.attr("src", playerSong.Url);
 
-// on next button call next
+    var player = $("audio");
+    player[0].load();
+    player[0].play();
+
+    sessionStorage.setItem('currentSongId', playerSong.Id);
+    sessionStorage.setItem('currentSongName', playerSong.Name);
+}
+
 function playNextSong() {
-    var songId;
-    var allSongs = getAllSongs();
-    for (var song in allSongs) {
-        if (song.SongName == selectedSong) {
-            songId = song.Id;
-        }
-    }
-
-    var url = "http://localhost/api/Music/GetNextSong";
+    var currentSongId = sessionStorage.getItem("currentSongId");
+    var url = "http://localhost/api/Music/Next";
     var data = {
-        "songId": songId
-    }
-    $.ajax({
-        type: "GET",
-        url: url,
-        data: data,
-        success: function (data) {
-            console.log("Data: ", data);
-            var songId = data.Id;
-            var songName = data.Name;
-            var src = data.Url;
-            var audio = $("audio source");
-            audio.attr("src", src);
-            audio[0].play();
-        },
-        success: function () {
-            console.log("Eror: ");
-        },
-        dataType: "application/json"
-    });
-}
-
-function handleFiles(files) {
-    var file = files[0];    
-    if (file.type != "audio/mp3") {
-        console.log("Invalid data type");
-        $('.uploadFiles .errorMessage').css('display', 'block');
-        $('.uploadFiles .errorMessage').text("The type of the file that you are trying to upload is invalid. Please select mp3 file!")
-        $('#ajaxUploadButton').prop('disabled', true);
-    } else {
-        $('.uploadFiles .errorMessage').css('display', 'none');
-        $('#ajaxUploadButton').prop('disabled', false);
-    }
-}
-
-function rateSong() {
-    console.log("rateSong");
-
-    var rating = $("#rationgDropDown").val();
-    var token = sessionStorage.accessToken;
-    var headers = {
-        Authorization: 'Bearer ' + token
-    }
-    var url = "http://localhost/api/Music/Rate";
-    var data = {
-        "Rating": rating,
-        "SongId": "2"
-    }
-
+        PlayedSongIds: [], // get from local storage
+        CurrentSongId: currentSongId
+    };
     $.ajax({
         type: "POST",
         url: url,
-        headers: headers,
         data: data,
-        success: function () {
-            console.log("Successfull Rating");
+        success: playSong,
+        error: function (e) {
+            console.log("Error: ");
         }
     });
 }
+
+    function handleFiles(files) {
+        var file = files[0];    
+        if (file.type != "audio/mp3") {
+            console.log("Invalid data type");
+            $('.uploadFiles .errorMessage').css('display', 'block');
+            $('.uploadFiles .errorMessage').text("The type of the file that you are trying to upload is invalid. Please select mp3 file!")
+            $('#ajaxUploadButton').prop('disabled', true);
+        } else {
+            $('.uploadFiles .errorMessage').css('display', 'none');
+            $('#ajaxUploadButton').prop('disabled', false);
+        }
+    }
+
+    function rateSong() {
+        console.log("rateSong");
+
+        var rating = $("#rationgDropDown").val();
+        var token = sessionStorage.accessToken;
+        var headers = {
+            Authorization: 'Bearer ' + token
+        }
+        var url = "http://localhost/api/Music/Rate";
+        var data = {
+            "Rating": rating,
+            "SongId": "2"
+        }
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            headers: headers,
+            data: data,
+            success: function () {
+                console.log("Successfull Rating");
+            }
+        });
+    }

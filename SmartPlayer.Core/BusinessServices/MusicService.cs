@@ -66,8 +66,11 @@ namespace SmartPlayer.Core.BusinessServices
             // Add recommendation system logic
             var currentSong = repo.GetAll().First(x => x.Id == songRequest.CurrentSongId);
 
+            var notNextSongIds = songRequest.PlayedSongIds ?? new List<int>();
+            notNextSongIds.Add(currentSong.Id);
+
             var selectedSong = repo.GetAll()
-                .Where(x => !songRequest.PlayedSongIds.Contains(x.Id))
+                .Where(x => !notNextSongIds.Contains(x.Id))
                 .OrderBy(x => Math.Abs(currentSong.Grade - x.Grade))
                 .First();
 
@@ -100,6 +103,18 @@ namespace SmartPlayer.Core.BusinessServices
             context.Dispose();
 
             return song;
+        }
+
+        public List<SongDto> SearchSong(string query)
+        {
+            SmartPlayerEntities context = new SmartPlayerEntities();
+            MusicRepository repo = new MusicRepository(context);
+
+            var requestedSongs = repo.SearchByTerm(query);
+
+            context.Dispose();
+
+            return requestedSongs.Select(x => new SongDto() { Id = x.Id, SongName = x.Name }).ToList();
         }
 
         public void RateSong(SongRatingDto rating, string userName)

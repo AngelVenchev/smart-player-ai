@@ -52,6 +52,15 @@ namespace SmartPlayer.Controllers
             return song;
         }
 
+        [Route("SearchSong")]
+        [HttpGet]
+        public async Task<List<SongDto>> SearchSong(string s)
+        {
+            MusicService service = new MusicService();
+            var songs = service.SearchSong(s);
+            return songs;
+        }
+
         [Route("Next")]
         [HttpPost]
         public async Task<PlayerSongDto> GetNextSong(NextSongDto nextSongRequest)

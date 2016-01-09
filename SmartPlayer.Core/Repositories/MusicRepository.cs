@@ -11,5 +11,10 @@ namespace SmartPlayer.Core.Repositories
     {
         public MusicRepository(SmartPlayerEntities context)
             : base(context) { }
+
+        public List<Song> SearchByTerm(string term)
+        {
+            return Context.Songs.Where(s => s.Name.Contains(term)).ToList();
+        }
     }
 }

@@ -94,8 +94,8 @@ textarea {
 
 
 .player {
-    display: none;
-    /*display: inline-block;*/
+    /*display: none;*/
+    display: inline-block;
     width: 400px;
     margin: 0 auto;
 }
