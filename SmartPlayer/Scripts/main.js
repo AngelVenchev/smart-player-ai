@@ -13,7 +13,9 @@ function attachEventListeners() {
     $('.typeahead').typeahead({
         hint: true,
         highlight: true,
-        minLength: 1
+        minLength: 1,
+        valueKey: "Id",
+        displayKey: 'Name'
     },
     {
         name: 'songs',
@@ -75,43 +77,43 @@ function getAllSongsNames() {
     return songsNames;
 }
 
+$('input').on('change', function () {
+    console.log($(this).val());
+});
+
 // Call GetSong with selected song Id
-function playSelestedSong() {
+function playSelectedSong() {
     var selectedSong = $(".typeahead.tt-input").val();
     console.log("selectedSong", selectedSong);
     
     var songId;
     var allSongs = getAllSongs();
-    for (var song in allSongs) {
-        if (song.SongName == selectedSong) {
-            songId = song.Id;
+    for (var i = 0; i < allSongs.length; i++) {
+        if (allSongs[i].SongName == selectedSong) {
+            songId = allSongs[i].Id;
         }
     }
 
-    var url = "http://localhost/api/Music/GetSong";
-    var data = {
-        "songId": songId
-    }
+    var url = "http://localhost/api/Music/GetSong/?songId=" + songId;
     $.ajax({
         type: "GET",
         url: url,
-        data: data,        
-        // onsuccess play song
         success: function (data) {
             console.log("Data: ", data);
             var songId = data.Id;
             var songName = data.Name;
             var src = data.Url;
-            var audio = $("audio source");
-            audio.attr("src", src);
+            var audioSource = $("audio source");
+            audioSource.attr("src", src);
+            var audio = $("audio");
+            audio[0].load();
             audio[0].play();
             sessionStorage.setItem('currentSong', { "songName": songName, "songId": songId });
             console.log("currentSong:", sessionStorage.currentSong);
         },
-        success: function () {
+        error: function (err) {
             console.log("Eror: ");
-        },
-        dataType: "application/json"
+        }
     });
 }
 
