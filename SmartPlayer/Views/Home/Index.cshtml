@@ -17,8 +17,15 @@
             <source src="" type="audio/mpeg">
         </audio>
         <p class="songName">Song</p>
-        <div class="like" title="Like" onclick="likeCurrentSong()">Like</div>
-        <div class="dislike" title="Dislike" onclick="dislikeCurrentSong()">Dislike</div>
+        @*<div id="rateSong"></div>*@
+        <select id="ratingDropDown" name="colors">
+            <option value="1">Very Bad</option>
+            <option value="2">Bad</option>
+            <option value="3">Ok</option>
+            <option value="4">Good</option>
+            <option value="5">Very Good</option>
+        </select>   
+        <button id="rateSongBtn">Rate</button>
         <button class="nextSong">
             <div class="icon"></div>
             <div class="label">Next Song</div>
