@@ -96,7 +96,23 @@ textarea {
 .player {
     display: none;
     /*display: inline-block;*/
+    width: 400px;
+    margin: 0 auto;
 }
+
+.player .songName {
+    font-size: 17px;
+}
+
+.player .rateSong {
+    display: inline-block;
+}
+
+.player .nextSong {
+    display: block;
+    font-size: 20px;
+}
+
     
 .registrationForm,
 .logInForm {
