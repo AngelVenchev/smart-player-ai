@@ -1,5 +1,6 @@
 ﻿@section scripts {
     @Scripts.Render("~/Scripts/main.js")
+    @Scripts.Render("~/Scripts/typeahead.bundle.min.js")
 }
 
 @using System.Web.Mvc
@@ -7,12 +8,14 @@
     <div class="startPlayer">
         <p>Choose a song and start listening to the perfect music for your mood!</p>
 
-        <input id="autocomplete">
-        <button class="playBtn">Play</button>
+        <input class="typeahead" type="text" placeholder="Song">
+        <button class="playBtn btn btn-default" onclick="playSelectedSong()">Play</button>
     </div>
 
     <div class="player">
-        <button class="playPauseBtn" onclick="togglePlayPause()">Play/Pause</button>
+        <audio controls>
+            <source src="" type="audio/mpeg">
+        </audio>
         <p class="songName">Song</p>
         <div class="like" title="Like" onclick="likeCurrentSong()">Like</div>
         <div class="dislike" title="Dislike" onclick="dislikeCurrentSong()">Dislike</div>
@@ -20,7 +23,6 @@
             <div class="icon"></div>
             <div class="label">Next Song</div>
         </button>
-        <p class="nextSongName">Next Song</p>
     </div>
 
     <div class="uploadFiles">
