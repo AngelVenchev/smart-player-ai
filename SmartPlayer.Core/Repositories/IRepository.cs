@@ -21,7 +21,7 @@ namespace SmartPlayer.Core.Repositories
         int Update(TEntity entity, Expression<Func<TEntity, object>> changedProperty);
         void Create(IEnumerable<TEntity> entities);
         int Create(TEntity entity);
-        IList<TEntity> GetAll();
+        IQueryable<TEntity> GetAll();
         int Delete(IEnumerable<TEntity> entities);
         int Delete(TEntity entity);
         void DeleteWithoutSave(IEnumerable<TEntity> entities);
