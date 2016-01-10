@@ -1,36 +1,19 @@
 ﻿$(document).ready(function () {
     attachEventListeners();
     isUserLoggedIn();    
+    sessionStorage.setItem("playedSongs", JSON.stringify([]));
 });
 
 var baseUrl = "http://localhost";
-localStorage.setItem("baseUrl", baseUrl);
-
-function isUserLoggedIn() {
-    var token = sessionStorage.getItem('accessToken');
-    var headers = {
-        Authorization: 'Bearer ' + token
-    }
-    var url = baseUrl + "/api/Account/UserInfo";
-    $.ajax({
-        type: "GET",
-        url: url,
-        headers: headers,
-        success: function () {
-            $('body').addClass("loggedUser");
-            $('.accountInfo .userName').text(sessionStorage.userName);
-        },
-        error: function () {
-            console.log("Error!");
-            logout();
-        }
-    });
-}
 
 function attachEventListeners() {
     $("#rateSongBtn").click(rateSong);
     $("#nextSongButton").click(playNextSong);
+    $("audio").on("ended", playNextSong);
+    configureTypeahead();
+};
 
+function configureTypeahead() {
     var songs = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -53,25 +36,46 @@ function attachEventListeners() {
         display: "value",
         source: songs
     });
-};
 
-$('.typeahead').bind('typeahead:select', function (ev, suggestion) {
-    playSelectedSong(suggestion.id);
-});
+    $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
+        playSelectedSong(suggestion.id);
+    });
+}
 
-// Call GetSong with selected song Id
-function playSelectedSong(songId) {
+function getAuthHeaders() {
     var token = sessionStorage.getItem('accessToken');
-    var url = baseUrl + "/api/Music/GetSong/?songId=" + songId;
-    if (token) {
+    if(token) {
         var headers = {
             Authorization: 'Bearer ' + token
         }
     }
+    return headers;
+}
+
+function isUserLoggedIn() {
+    var url = baseUrl + "/api/Account/UserInfo";
     $.ajax({
         type: "GET",
         url: url,
-        headers: headers,
+        headers: getAuthHeaders(),
+        success: function () {
+            $('body').addClass("loggedUser");
+            $('.accountInfo .userName').text(sessionStorage.userName);
+        },
+        error: function () {
+            console.log("Error!");
+            logout();
+        }
+    });
+}
+
+// Call GetSong with selected song Id
+function playSelectedSong(songId) {
+    var url = baseUrl + "/api/Music/GetSong/?songId=" + songId;
+    $.ajax({
+        type: "GET",
+        url: url,
+        headers: getAuthHeaders(),
         success: playSong,
         error: function (err) {
             console.log("Eror: ");
@@ -90,29 +94,25 @@ function playSong(playerSong) {
 
     $('p.songName').text(playerSong.Name);
 
-    player.on("ended", playNextSong);
-
     sessionStorage.setItem('currentSongId', playerSong.Id);
     sessionStorage.setItem('currentSongName', playerSong.Name);
+    var playedSongs = JSON.parse(sessionStorage.getItem("playedSongs"));
+    playedSongs.push(playerSong.Id);
+    sessionStorage.setItem("playedSongs", JSON.stringify(playedSongs));
 }
 
 function playNextSong() {
-    var currentSongId = sessionStorage.getItem("currentSongId");
-    var token = sessionStorage.getItem('accessToken');
     var url =  baseUrl + "/api/Music/Next";
-    if (token) {
-        var headers = {
-            Authorization: 'Bearer ' + token
-        }
-    }
+    var currentSongId = sessionStorage.getItem("currentSongId");
+    var playedSongs = JSON.parse(sessionStorage.getItem("playedSongs"))
     var data = {
-        PlayedSongIds: [], // get from local storage
+        PlayedSongIds: playedSongs, // get from local storage
         CurrentSongId: currentSongId
     };
     $.ajax({
         type: "POST",
         url: url,
-        headers: headers,
+        headers: getAuthHeaders(),
         data: data,
         success: playSong,
         error: function (e) {
@@ -121,40 +121,36 @@ function playNextSong() {
     });
 }
 
-    function handleFiles(files) {
-        var file = files[0];    
-        if (file.type != "audio/mp3") {
-            console.log("Invalid data type");
-            $('.uploadFiles .errorMessage').css('display', 'block');
-            $('.uploadFiles .errorMessage').text("The type of the file that you are trying to upload is invalid. Please select mp3 file!")
-            $('#ajaxUploadButton').prop('disabled', true);
-        } else {
-            $('.uploadFiles .errorMessage').css('display', 'none');
-            $('#ajaxUploadButton').prop('disabled', false);
-        }
+function handleFiles(files) {
+    var file = files[0];    
+    if (file.type != "audio/mp3") {
+        console.log("Invalid data type");
+        $('.uploadFiles .errorMessage').css('display', 'block');
+        $('.uploadFiles .errorMessage').text("The type of the file that you are trying to upload is invalid. Please select mp3 file!")
+        $('#ajaxUploadButton').prop('disabled', true);
+    } else {
+        $('.uploadFiles .errorMessage').css('display', 'none');
+        $('#ajaxUploadButton').prop('disabled', false);
+    }
+}
+
+function rateSong() {
+    console.log("rateSong");
+    var rating = $("#rationgDropDown").val();
+    var url = baseUrl + "/api/Music/Rate";
+
+    var data = {
+        Rating: rating,
+        SongId: sessionStorage.getItem('currentSongId')
     }
 
-    function rateSong() {
-        console.log("rateSong");
-
-        var rating = $("#rationgDropDown").val();
-        var token = sessionStorage.getItem('accessToken');
-        var headers = {
-            Authorization: 'Bearer ' + token
+    $.ajax({
+        type: "POST",
+        url: url,
+        headers: getAuthHeaders(),
+        data: data,
+        success: function () {
+            console.log("Successfull Rating");
         }
-        var url = baseUrl + "/api/Music/Rate";
-        var data = {
-            Rating: rating,
-            SongId: sessionStorage.getItem('currentSongId')
-        }
-
-        $.ajax({
-            type: "POST",
-            url: url,
-            headers: headers,
-            data: data,
-            success: function () {
-                console.log("Successfull Rating");
-            }
-        });
-    }
+    });
+}
