@@ -48,7 +48,7 @@ namespace SmartPlayer.Controllers
         public async Task<PlayerSongDto> GetSong(int songId)
         {
             MusicService service = new MusicService();
-            var song = service.GetSong(songId);
+            var song = service.GetSong(songId, User.Identity.Name);
             return song;
         }
 
@@ -66,7 +66,7 @@ namespace SmartPlayer.Controllers
         public async Task<PlayerSongDto> GetNextSong(NextSongDto nextSongRequest)
         {
             MusicService service = new MusicService();
-            var song = service.GetNextSong(nextSongRequest);
+            var song = service.GetNextSong(nextSongRequest, User.Identity.Name);
             return song;
         }
 

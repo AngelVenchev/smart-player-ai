@@ -18,8 +18,11 @@ namespace SmartPlayer.Core.Repositories
                 .Include("UserSongVote")
                 .Where(x => x.Id != userId)
                 .ToList();
-
         }
 
+        public User GetUserByUsername(string username)
+        {
+            return this.Context.Users.First(x => x.UserName == username);
+        }
     }
 }
