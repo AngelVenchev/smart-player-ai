@@ -38,16 +38,6 @@ textarea {
     float: right;
 }
 
-.topNav .logInBtn {
-    border-right: 1px solid black;
-}
-
-.topNav .logInBtn,
-.topNav .registerBtn {
-    font-size: 18px;
-    padding: 0 6px 0 2px;
-}
-
 .uploadFiles {
     display: block;
     margin: 0px 20px;
@@ -180,12 +170,6 @@ body.loggedUser .topNav .logOutBtn {
 body.loggedUser .topNav .logInBtn,
 body.loggedUser .topNav .registerBtn {
     display: none;
-}
-
-.topNav .logInBtn,
-.topNav .registerBtn {
-    font-size: 18px;
-    padding: 0 6px 0 2px;
 }
 
 body.loggedUser .topNav .userName {
