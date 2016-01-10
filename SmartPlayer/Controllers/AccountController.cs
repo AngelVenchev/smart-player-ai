@@ -51,12 +51,12 @@ namespace SmartPlayer.Controllers
 
         public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
-        [Route("UserInfo")]
+        [Route("IsUserAuthenticated")]
+        [AllowAnonymous]
         [HttpGet]
-        [Authorize]
-        public async Task<string> GetUserInfo()
+        public async Task<bool> GetUserInfo()
         {
-            return User.Identity.Name;
+            return User.Identity.IsAuthenticated;
         }
 
         // POST api/Account/ChangePassword

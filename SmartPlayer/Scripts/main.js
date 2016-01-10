@@ -53,18 +53,22 @@ function getAuthHeaders() {
 }
 
 function isUserLoggedIn() {
-    var url = baseUrl + "/api/Account/UserInfo";
+    var url = baseUrl + "/api/Account/IsUserAuthenticated";
     $.ajax({
         type: "GET",
         url: url,
         headers: getAuthHeaders(),
-        success: function () {
-            $('body').addClass("loggedUser");
-            $('.accountInfo .userName').text(sessionStorage.userName);
+        success: function (userIsAuthenticated) {
+            if (userIsAuthenticated)
+            {
+                $('body').addClass("loggedUser");
+                $('.accountInfo .userName').text(sessionStorage.userName);
+            } else {
+                logout();
+            }
         },
-        error: function () {
-            console.log("Error!");
-            logout();
+        error: function (err) {
+            console.log("Error!" + err);
         }
     });
 }
