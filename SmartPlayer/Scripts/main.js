@@ -75,7 +75,7 @@ function playSelectedSong(songId) {
 }
 
 function playSong(playerSong) {
-    $('.typeahead.tt-input').val('');
+    $('.typeahead').typeahead('val', '');
     var audioSource = $("audio source");
     audioSource.attr("src", playerSong.Url);
 
