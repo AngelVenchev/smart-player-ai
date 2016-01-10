@@ -1,4 +1,11 @@
-﻿function register() {
+﻿$('.logInForm .logInBtn').click(function() {
+    var email = $('.logInForm .emailInput').val();
+    var password = $('.logInForm .passwordInput').val();
+    getToken(email, password);
+});
+
+
+function register() {
     console.log("Register");
 
     var email = $('.registrationForm .emailInput').val();
@@ -9,6 +16,7 @@
         Password: password,
         ConfirmPassword: confirmPassword
     }
+    console.log("data::", data);
     var url = "http://localhost/api/Account/Register";
 
     $.ajax({
@@ -16,19 +24,18 @@
         url: url,
         data: JSON.stringify(data),
         contentType: 'application/json; charset=utf-8',
-        success: function () {
+        success: function (data) {
             console.log("Successfull Registration");
-            //openHomePage();
+            getToken(email, password);
         },
         dataType: "application/json"
     });
 }
 
 
-function getToken() {
+function getToken(email, password) {
     console.log("Get Token");
-    var email = $('.logInForm .emailInput').val();
-    var password = $('.logInForm .passwordInput').val();
+
     var data = {
         Username: email,
         Password: password,
@@ -46,8 +53,7 @@ function getToken() {
             console.log("Data:", data);
             sessionStorage.accessToken = data.access_token;
             sessionStorage.userName = data.userName;
-            $('body').addClass("loggedUser");
-            $('.accountInfo .userName').text(sessionStorage.userName);
+            window.location.href = 'http://localhost';
         }
     });
 }

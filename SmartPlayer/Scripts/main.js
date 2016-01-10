@@ -1,10 +1,31 @@
-﻿// call GetAll
-$(document).ready(function () {
+﻿$(document).ready(function () {
     attachEventListeners();
+    isUserLoggedIn();    
 });
 
 var baseUrl = "http://localhost";
 localStorage.setItem("baseUrl", baseUrl);
+
+function isUserLoggedIn() {
+    var token = sessionStorage.getItem('accessToken');
+    var headers = {
+        Authorization: 'Bearer ' + token
+    }
+    var url = "http://localhost/api/Account/UserInfo";
+    $.ajax({
+        type: "GET",
+        url: url,
+        headers: headers,
+        success: function () {
+            $('body').addClass("loggedUser");
+            $('.accountInfo .userName').text(sessionStorage.userName);
+        },
+        error: function () {
+            console.log("Error!");
+            logout();
+        }
+    });
+}
 
 function attachEventListeners() {
     $("#rateSongBtn").click(rateSong);
@@ -32,30 +53,7 @@ function attachEventListeners() {
         display: "value",
         source: songs
     });
-
 };
-
-function getAllSongs() {
-    console.log("GetAllSongs");
-
-    var allSongs = {};
-    var url = baseUrl + "/api/Music/GetAll";
-    $.ajax({
-        type: "GET",
-        async: false,
-        url: url,
-        success: function (data) {
-            console.log("Data: ", data);
-            allSongs = data;
-            console.log("allSongs: ", allSongs);            
-        },
-        error: function () {
-            console.log("Error!");
-        }
-    });
-
-    return allSongs;
-}
 
 $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
     playSelectedSong(suggestion.id);
@@ -63,10 +61,17 @@ $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
 
 // Call GetSong with selected song Id
 function playSelectedSong(songId) {
+    var token = sessionStorage.getItem('accessToken');
+    if (token) {
+        var headers = {
+            Authorization: 'Bearer ' + token
+        }
+    }
     var url = "http://localhost/api/Music/GetSong/?songId=" + songId;
     $.ajax({
         type: "GET",
         url: url,
+        headers: headers,
         success: playSong,
         error: function (err) {
             console.log("Eror: ");
@@ -93,6 +98,12 @@ function playSong(playerSong) {
 
 function playNextSong() {
     var currentSongId = sessionStorage.getItem("currentSongId");
+    var token = sessionStorage.getItem('accessToken');
+    if (token) {
+        var headers = {
+            Authorization: 'Bearer ' + token
+        }
+    }
     var url = "http://localhost/api/Music/Next";
     var data = {
         PlayedSongIds: [], // get from local storage
@@ -101,6 +112,7 @@ function playNextSong() {
     $.ajax({
         type: "POST",
         url: url,
+        headers: headers,
         data: data,
         success: playSong,
         error: function (e) {
