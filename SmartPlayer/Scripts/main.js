@@ -140,7 +140,7 @@ function handleFiles(files) {
 
 function rateSong() {
     console.log("rateSong");
-    var rating = $("#rationgDropDown").val();
+    var rating = $("#ratingDropDown").val();
     var url = baseUrl + "/api/Music/Rate";
 
     var data = {
