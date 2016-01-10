@@ -59,8 +59,6 @@ function getAllSongs() {
 
 $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
     playSelectedSong(suggestion.id);
-    $('.typeahead.tt-input').val('');
-
 });
 
 // Call GetSong with selected song Id
@@ -77,6 +75,7 @@ function playSelectedSong(songId) {
 }
 
 function playSong(playerSong) {
+    $('.typeahead.tt-input').val('');
     var audioSource = $("audio source");
     audioSource.attr("src", playerSong.Url);
 
