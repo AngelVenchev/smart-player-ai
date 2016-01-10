@@ -49,7 +49,8 @@ textarea {
 }
 
 .uploadFiles {
-
+    display: block;
+    margin: 0px 20px;
 }
 
 .uploadFiles .errorMessage {
@@ -63,10 +64,8 @@ textarea {
 }
 
 .startPlayer {
-    margin: 15px 0;
-    padding: 25px;
-    display: inline-block;
-    /*display: none;*/
+    margin: 15px 20px;
+    display: block;
 }
 
 .typeahead {
@@ -94,17 +93,20 @@ textarea {
 
 
 .player {
-    /*display: none;*/
-    display: inline-block;
+    display: block;
     width: 400px;
-    margin: 0 auto;
+    margin: 30px 20px;
 }
 
 .player .songName {
     font-size: 17px;
 }
 
-.player .rateSong {
+.player .ratingDropDown {
+    display: none;
+}
+
+.loggedUser .player .ratingDropDown {
     display: inline-block;
 }
 
