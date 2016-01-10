@@ -59,7 +59,7 @@ function getAllSongs() {
 
 $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
     playSelectedSong(suggestion.id);
-    $('.typeahead').val('');
+    $('.typeahead.tt-input').val('');
 
 });
 
