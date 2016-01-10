@@ -63,6 +63,26 @@ textarea {
     margin: 15px;
 }
 
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
 .startPlayer {
     margin: 15px 20px;
     display: block;
@@ -81,14 +101,36 @@ textarea {
   outline: none;
 }
 
+.player-controls {
+    margin-left: 0px;
+}
 .player {
     display: block;
     width: 400px;
     margin: 30px 20px;
 }
 
+.player audio {
+    float: left;
+}
+
+.player .nextSong {
+    display: block;
+    font-size: 15px;
+    float:left;
+    margin-left: 10px;
+    padding: 4px 12px;
+}
+
+
 .player .songName {
     font-size: 17px;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+.player #ratingDropDown {
+    width: 130px;
 }
 
 .player #ratingDropDown,
@@ -101,12 +143,6 @@ textarea {
     display: inline-block;
 }
 
-.player .nextSong {
-    display: block;
-    font-size: 20px;
-}
-
-    
 .registrationForm,
 .logInForm {
     margin-top: 20px;

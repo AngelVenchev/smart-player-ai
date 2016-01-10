@@ -144,6 +144,7 @@ function handleFiles(files) {
     } else {
         $('.uploadFiles .errorMessage').css('display', 'none');
         $('#ajaxUploadButton').prop('disabled', false);
+        $("#fileUploadForm").submit();
     }
 }
 

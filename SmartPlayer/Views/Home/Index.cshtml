@@ -12,32 +12,32 @@
     </div>
 
     <div class="player">
-        <audio controls>
-            <source src="" type="audio/mp3">
-        </audio>
+        <div class="player-controls row">
+            <audio controls>
+                <source src="" type="audio/mp3">
+            </audio>
+            <button class="nextSong btn btn-default" id="nextSongButton">Next Song</button>
+        </div>
         <p class="songName">Song</p>
-        <select id="ratingDropDown" name="colors">
-            <option value="1">Very Bad</option>
-            <option value="2">Bad</option>
-            <option value="3">Ok</option>
-            <option value="4">Good</option>
+        <select id="ratingDropDown" class="form-control" name="colors">
             <option value="5">Very Good</option>
+            <option value="4">Good</option>
+            <option value="3">Ok</option>
+            <option value="2">Bad</option>
+            <option value="1">Very Bad</option>
         </select>   
         <button id="rateSongBtn" class="btn btn-default">Rate</button>
-        <button class="nextSong" id="nextSongButton">
-            <div class="icon"></div>
-            <div class="label">Next Song</div>
-        </button>
     </div>
 
     <div class="uploadFiles">
         <form enctype="multipart/form-data" method="post" action="http://localhost/api/Music/Upload"
-              id="ajaxUploadForm" novalidate="novalidate">
+              id="fileUploadForm" novalidate="novalidate">
             <fieldset>
                 <legend>Upload Song</legend>
-                <input type="file" id="fileInput" name="fileInput" onchange="handleFiles(files)">
+                <span class="btn btn-default btn-file">
+                    Browse... <input type="file" id="fileInput" name="fileInput" onchange="handleFiles(files)" >
+                </span>
                 <div class="errorMessage"></div>
-                <input type="submit" value="Upload" id="ajaxUploadButton" class="btn">
             </fieldset>
         </form>
     </div>
