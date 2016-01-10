@@ -5,9 +5,9 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="87e4a5e1a1e4459ba54c3421729eab59" Name="Diagram1" >
-        <EntityTypeShape EntityType="SmartPlayerModel.User" Width="1.5" PointX="0.75" PointY="1" />
-        <EntityTypeShape EntityType="SmartPlayerModel.Song" Width="1.5" PointX="0.75" PointY="5.75" />
-        <EntityTypeShape EntityType="SmartPlayerModel.UserSongVote" Width="1.5" PointX="3" PointY="1.75" />
+        <EntityTypeShape EntityType="SmartPlayerModel.User" Width="1.5" PointX="0.75" PointY="6.25" />
+        <EntityTypeShape EntityType="SmartPlayerModel.Song" Width="1.5" PointX="0.75" PointY="1" />
+        <EntityTypeShape EntityType="SmartPlayerModel.UserSongVote" Width="1.5" PointX="3" PointY="0.875" />
         <AssociationConnector Association="SmartPlayerModel.FK_UserSongVote_AspNetUsers" />
         <AssociationConnector Association="SmartPlayerModel.FK_UserSongVote_Song" />
       </Diagram>
