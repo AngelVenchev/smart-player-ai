@@ -58,6 +58,16 @@ textarea {
     display: block;
 }
 
+.uploadFiles {
+    display: block;
+    margin: 0px 20px;
+}
+
+.uploadFiles #fileUploadForm .errorMessage {
+    color: red;
+    font-size: 14px;
+}
+
 .uploadFiles #fileUploadForm .progress {
     color: gray;
     background-color: white;
