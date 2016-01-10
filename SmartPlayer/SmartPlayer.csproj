@@ -253,6 +253,7 @@
     <Content Include="Content\Images\thumbDown.png" />
     <Content Include="Content\Images\thumbUp.png" />
     <Content Include="Content\jquery-ui.css" />
+    <Content Include="Content\typeahead.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

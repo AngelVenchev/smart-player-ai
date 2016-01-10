@@ -29,6 +29,7 @@ namespace SmartPlayer
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/jquery-ui.css",
+                      "~/Content/typeahead.css",
                       "~/Content/site.css"));
         }
     }

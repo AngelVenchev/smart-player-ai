@@ -15,7 +15,7 @@ namespace SmartPlayer.Core.Repositories
 
         public List<Song> SearchByTerm(string term)
         {
-            return Context.Songs.Where(s => s.Name.Contains(term)).ToList();
+            return Context.Songs.Where(s => s.Name.ToLower().Contains(term.ToLower())).Take(10).ToList();
         }
 
         public Song GetNextSongBasedOnUserAndGrade(double currentSongGrade, List<int> excludedSongs)

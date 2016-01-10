@@ -18,23 +18,32 @@ function configureTypeahead() {
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: baseUrl + "/api/Music/SearchSong?s=%QUERY%",
+            url: baseUrl + "/api/Music/SearchSong",
+            replace: function (url, query) {
+                return url + "?s=" + query;
+            },
             filter: function (x) {
                 return $.map(x, function (item) {
-                    return { id: item.Id, value: item.SongName };
+                    return {
+                        id: item.Id,
+                        value: item.SongName
+                    };
                 });
             },
             wildcard: '%QUERY%'
         }
     });
 
+    songs.initialize();
+
     $('.typeahead').typeahead({
-        hint: true,
-        highlight: true,
-        minLength: 1
+        hints: false
     }, {
-        display: "value",
-        source: songs
+        limit: 20,
+        name: "songs",
+        displayKey: "value",
+        minLength:1,
+        source: songs.ttAdapter()
     });
 
     $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
