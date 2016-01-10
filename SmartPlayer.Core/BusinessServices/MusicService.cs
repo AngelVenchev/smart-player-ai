@@ -11,6 +11,7 @@ using System.Configuration.Assemblies;
 using System.Configuration;
 using System.IO;
 using SmartPlayer.Core.DTOs;
+using SmartPlayer.Core.Utility;
 
 namespace SmartPlayer.Core.BusinessServices
 {
@@ -74,11 +75,16 @@ namespace SmartPlayer.Core.BusinessServices
                 .OrderBy(x => Math.Abs(currentSong.Grade - x.Grade))
                 .First();
 
+            var songUrl = string.Format("http://{0}{1}{2}",
+                IpV4Provider.GetLocalIPAddress(),
+                ConfigurationManager.AppSettings["MediaServerLoadPort"],
+                selectedSong.Guid);
+
             PlayerSongDto song = new PlayerSongDto()
             {
                 Id = selectedSong.Id,
                 Name = selectedSong.Name,
-                Url = ConfigurationManager.AppSettings["MediaServerLoadBaseUrl"] + selectedSong.Guid
+                Url =  songUrl
             };
 
             context.Dispose();
@@ -93,11 +99,16 @@ namespace SmartPlayer.Core.BusinessServices
 
             var requestedSong = repo.GetAll().First(x => x.Id == songId);
 
+            var songUrl = string.Format("http://{0}{1}{2}",
+                IpV4Provider.GetLocalIPAddress(),
+                ConfigurationManager.AppSettings["MediaServerLoadPort"],
+                requestedSong.Guid);
+
             PlayerSongDto song = new PlayerSongDto()
             {
                 Id = requestedSong.Id,
                 Name = requestedSong.Name,
-                Url = ConfigurationManager.AppSettings["MediaServerLoadBaseUrl"] + requestedSong.Guid
+                Url = songUrl
             };
 
             context.Dispose();

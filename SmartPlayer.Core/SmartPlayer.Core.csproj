@@ -69,6 +69,7 @@
     <Compile Include="Repositories\UserSongRatingRepository.cs" />
     <Compile Include="SongAnalyzer\Analyzer.cs" />
     <Compile Include="SongAnalyzer\PearsonScoreCalculator.cs" />
+    <Compile Include="Utility\IpV4Provider.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
