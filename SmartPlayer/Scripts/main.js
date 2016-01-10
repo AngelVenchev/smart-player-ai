@@ -7,7 +7,7 @@ var baseUrl = "http://localhost";
 localStorage.setItem("baseUrl", baseUrl);
 
 function attachEventListeners() {
-    $("#rateSongBtn").click("rateSong");
+    $("#rateSongBtn").click(rateSong);
     $("#nextSongButton").click(playNextSong);
 
     var songs = new Bloodhound({
@@ -121,14 +121,14 @@ function playNextSong() {
         console.log("rateSong");
 
         var rating = $("#rationgDropDown").val();
-        var token = sessionStorage.accessToken;
+        var token = sessionStorage.getItem('accessToken');
         var headers = {
             Authorization: 'Bearer ' + token
         }
         var url = "http://localhost/api/Music/Rate";
         var data = {
-            "Rating": rating,
-            "SongId": "2"
+            Rating: rating,
+            SongId: sessionStorage.getItem('currentSongId')
         }
 
         $.ajax({
