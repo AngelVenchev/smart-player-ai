@@ -38,21 +38,6 @@ textarea {
     float: right;
 }
 
-.uploadFiles {
-    display: block;
-    margin: 0px 20px;
-}
-
-.uploadFiles .errorMessage {
-    display: none;
-    color: red;
-    font-size: 14px;
-}
-
-.uploadFiles input {
-    margin: 15px;
-}
-
 .btn-file {
     position: relative;
     overflow: hidden;
@@ -71,6 +56,17 @@ textarea {
     background: white;
     cursor: inherit;
     display: block;
+}
+
+.uploadFiles #fileUploadForm .progress {
+    color: gray;
+    background-color: white;
+    font-size:15px;
+}
+
+.uploadFiles #fileUploadForm .done {
+    color: green;
+    font-size:15px;
 }
 
 .startPlayer {

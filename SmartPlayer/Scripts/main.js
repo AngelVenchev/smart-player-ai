@@ -10,6 +10,7 @@ function attachEventListeners() {
     $("#rateSongBtn").click(rateSong);
     $("#nextSongButton").click(playNextSong);
     $("audio").on("ended", playNextSong);
+
     configureTypeahead();
 };
 
@@ -135,7 +136,7 @@ function playNextSong() {
 }
 
 function handleFiles(files) {
-    var file = files[0];    
+    var file = files[0];
     if (file.type != "audio/mp3") {
         console.log("Invalid data type");
         $('.uploadFiles .errorMessage').css('display', 'block');
@@ -144,7 +145,18 @@ function handleFiles(files) {
     } else {
         $('.uploadFiles .errorMessage').css('display', 'none');
         $('#ajaxUploadButton').prop('disabled', false);
+        
+        $("#fileUploadForm").ajaxForm({
+            success: function () {
+                $('.progress').addClass("hidden");
+                $('.done').removeClass("hidden");
+                $(".done").fadeOut(1500, function () {
+                    $('.done').addClass("hidden");
+                });
+            }
+        });
         $("#fileUploadForm").submit();
+        $('.progress').removeClass("hidden");
     }
 }
 

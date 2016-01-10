@@ -9,7 +9,8 @@ namespace SmartPlayer
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-{version}.js"));
+                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/jquery.form.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jquery-ui").Include(
                         "~/Scripts/jquery-ui.js"));
