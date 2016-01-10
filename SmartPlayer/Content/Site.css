@@ -102,11 +102,13 @@ textarea {
     font-size: 17px;
 }
 
-.player .ratingDropDown {
+.player #ratingDropDown,
+.player #rateSongBtn {
     display: none;
 }
 
-.loggedUser .player .ratingDropDown {
+.loggedUser .player #ratingDropDown,
+.loggedUser .player #rateSongBtn {
     display: inline-block;
 }
 

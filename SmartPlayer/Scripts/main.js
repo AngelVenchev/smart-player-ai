@@ -58,7 +58,9 @@ function getAllSongs() {
 }
 
 $('.typeahead').bind('typeahead:select', function (ev, suggestion) {
-    playSelectedSong(suggestion.id)
+    playSelectedSong(suggestion.id);
+    $('.typeahead').val('');
+
 });
 
 // Call GetSong with selected song Id
@@ -81,6 +83,10 @@ function playSong(playerSong) {
     var player = $("audio");
     player[0].load();
     player[0].play();
+
+    $('p.songName').text(playerSong.Name);
+
+    player.on("ended", playNextSong);
 
     sessionStorage.setItem('currentSongId', playerSong.Id);
     sessionStorage.setItem('currentSongName', playerSong.Name);
