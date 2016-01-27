@@ -110,6 +110,9 @@ function playSong(playerSong) {
 
     sessionStorage.setItem('currentSongId', playerSong.Id);
     sessionStorage.setItem('currentSongName', playerSong.Name);
+    if (playerSong.CurrentUserVote) {
+        $('#ratingDropDown').val(playerSong.CurrentUserVote);
+    }
     var playedSongs = JSON.parse(sessionStorage.getItem("playedSongs"));
     playedSongs.push(playerSong.Id);
     sessionStorage.setItem("playedSongs", JSON.stringify(playedSongs));
