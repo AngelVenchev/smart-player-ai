@@ -99,6 +99,9 @@ function playSelectedSong(songId) {
 
 function playSong(playerSong) {
     $('.typeahead').typeahead('val', '');
+    $('#ratingDropDown').val('5');
+    $('#ratingDropDown').attr("disabled", false);
+    $('#rateSongBtn').attr("disabled", false);
     var audioSource = $("audio source");
     audioSource.attr("src", playerSong.Url);
 
@@ -112,6 +115,8 @@ function playSong(playerSong) {
     sessionStorage.setItem('currentSongName', playerSong.Name);
     if (playerSong.CurrentUserVote) {
         $('#ratingDropDown').val(playerSong.CurrentUserVote);
+        $('#ratingDropDown').attr("disabled", true);
+        $('#rateSongBtn').attr("disabled", true);
     }
     var playedSongs = JSON.parse(sessionStorage.getItem("playedSongs"));
     playedSongs.push(playerSong.Id);
