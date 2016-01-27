@@ -6,8 +6,6 @@
 
 
 function register() {
-    console.log("Register");
-
     var email = $('.registrationForm .emailInput').val();
     var password = $('.registrationForm .passwordInput').val();
     var confirmPassword = $('.registrationForm .confirmPasswordInput').val();
@@ -16,7 +14,6 @@ function register() {
         Password: password,
         ConfirmPassword: confirmPassword
     }
-    console.log("data::", data);
     var url = "http://localhost/api/Account/Register";
 
     $.ajax({
@@ -25,7 +22,6 @@ function register() {
         data: JSON.stringify(data),
         contentType: 'application/json; charset=utf-8',
         success: function (data) {
-            console.log("Successfull Registration");
             getToken(email, password);
         },
         dataType: "application/json"
@@ -34,14 +30,13 @@ function register() {
 
 
 function getToken(email, password) {
-    console.log("Get Token");
+
 
     var data = {
         Username: email,
         Password: password,
         grant_type: "password"
     }
-    console.log("data", data);
     var url = "http://localhost/token";
     $.ajax({
         type: "POST",
@@ -50,7 +45,6 @@ function getToken(email, password) {
         data: data,
         Accept: "application/json",
         success: function (data) {
-            console.log("Data:", data);
             sessionStorage.accessToken = data.access_token;
             sessionStorage.userName = data.userName;
             window.location.href = 'http://localhost';

@@ -146,7 +146,6 @@ function playNextSong() {
 function handleFiles(files) {
     var file = files[0];
     if (file.type != "audio/mp3") {
-        console.log("Invalid data type");
         $('.uploadFiles .errorMessage').css('display', 'block');
         $('.uploadFiles .errorMessage').text("The type of the file that you are trying to upload is invalid. Please select mp3 file!")
         $('#ajaxUploadButton').prop('disabled', true);
@@ -169,7 +168,6 @@ function handleFiles(files) {
 }
 
 function rateSong() {
-    console.log("rateSong");
     var rating = $("#ratingDropDown").val();
     var url = baseUrl + "/api/Music/Rate";
 
