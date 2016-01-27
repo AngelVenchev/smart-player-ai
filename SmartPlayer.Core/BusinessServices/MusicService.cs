@@ -161,5 +161,11 @@ namespace SmartPlayer.Core.BusinessServices
 
             return songVote;
         }
+
+        private async Task<bool> UpdateSongMetadata(string token)
+        {
+            // Consume discogs api
+            return await Task<bool>.Run(() => true);
+        }
     }
 }

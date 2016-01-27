@@ -79,5 +79,14 @@ namespace SmartPlayer.Controllers
             var username = this.User.Identity.Name;
             service.RateSong(rating, username);
         }
+
+        [Route("UpdateSongsMetadata")]
+        [HttpPost]
+        [Authorize]
+        public async Task<bool> UpdateSongMetadata(string discogsToken)
+        {
+            MusicService service = new MusicService();
+            return await service.UpdateSongMetadata(discogsToken);
+        }
     }
 }
