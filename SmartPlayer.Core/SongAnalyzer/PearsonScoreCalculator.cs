@@ -57,11 +57,17 @@ namespace SmartPlayer.Core.SongAnalyzer
                 var userVotes = scoreEntry.User.UserSongVotes;
                 if (scoreEntry.Score > 0)
                 {
-                    bestSongs.AddRange(userVotes.Where(x => x.Rating > 3.5).Select(x => x.Song));
+                    bestSongs.AddRange(userVotes
+                        .Where(x => x.Rating > 3.5)
+                        .OrderBy(x => x.Rating)
+                        .Select(x => x.Song));
                 }
                 else if (scoreEntry.Score < 0)
                 {
-                    bestSongs.AddRange(userVotes.Where(x => x.Rating < 2.5).Select(x => x.Song));
+                    bestSongs.AddRange(userVotes
+                        .Where(x => x.Rating < 2.5)
+                        .OrderByDescending(x => x.Rating)
+                        .Select(x => x.Song));
                 }
             }
 

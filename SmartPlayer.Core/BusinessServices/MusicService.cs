@@ -62,26 +62,31 @@ namespace SmartPlayer.Core.BusinessServices
         {
             using (SmartPlayerEntities context = new SmartPlayerEntities())
             {
-                string userId = null;
-                MusicRepository repo = new MusicRepository(context);
-                if (username != null)
+                MusicRepository musicRepo = new MusicRepository(context);
+                var currentSong = musicRepo.GetSongById(songRequest.CurrentSongId);
+                var excludedSongIdList = songRequest.PlayedSongIds;
+
+                var recommendedSongs = GetRecommendedSongsForUser(username, context);
+                recommendedSongs = recommendedSongs.Where(x => !excludedSongIdList.Contains(x.Id)).ToList();
+
+                var similarSongs = musicRepo.GetNextSongBasedOnUserAndGrade(currentSong.Grade);
+                similarSongs = similarSongs.Where(x => !excludedSongIdList.Contains(x.Id)).ToList();
+
+                var bestSongsForUser = new List<Song>();
+                if(recommendedSongs.Any() && similarSongs.Any())
                 {
-                    UserRepository userRepo = new UserRepository(context);
-                    userId = userRepo.GetUserByUsername(username).Id;                    
+                    bestSongsForUser = recommendedSongs.Intersect(similarSongs).ToList();
+                    if(!bestSongsForUser.Any())
+                    {
+                        bestSongsForUser = recommendedSongs.Union(similarSongs).ToList();
+                    }
+                }
+                else
+                {
+                    bestSongsForUser = recommendedSongs.Union(similarSongs).ToList();
                 }
 
-                PearsonScoreCalculator calculator = new PearsonScoreCalculator(context);
-                var recommendedSongs = calculator.GetBestSongsForUser(userId);
-                var currentSong = repo.GetSongById(songRequest.CurrentSongId);
-
-                var excludedSongList = songRequest.PlayedSongIds ?? new List<int>();
-                excludedSongList.Add(currentSong.Id);
-
-                var similarSongs = repo.GetNextSongBasedOnUserAndGrade(currentSong.Grade, excludedSongList);
-
-                var intersection = recommendedSongs.Intersect(similarSongs);
-
-                var selectedSong = intersection.OrderBy(x => x.Grade).First();
+                var selectedSong = bestSongsForUser.First();
 
                 var songUrl = string.Format("http://{0}{1}{2}",
                     IpV4Provider.GetLocalIPAddress(),
@@ -98,6 +103,20 @@ namespace SmartPlayer.Core.BusinessServices
 
                 return song;
             }
+        }
+
+        private static List<Song> GetRecommendedSongsForUser(string username, SmartPlayerEntities context)
+        {
+            var recommendedSongs = new List<Song>();
+            if (username != null)
+            {
+                UserRepository userRepo = new UserRepository(context);
+                var userId = userRepo.GetUserByUsername(username).Id;
+
+                PearsonScoreCalculator calculator = new PearsonScoreCalculator(context);
+                recommendedSongs = calculator.GetBestSongsForUser(userId);
+            }
+            return recommendedSongs;
         }
 
         public PlayerSongDto GetSong(int songId, string username)
