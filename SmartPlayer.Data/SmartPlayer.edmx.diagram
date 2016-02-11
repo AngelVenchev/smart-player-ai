@@ -6,10 +6,13 @@
     <edmx:Diagrams>
       <Diagram DiagramId="87e4a5e1a1e4459ba54c3421729eab59" Name="Diagram1" >
         <EntityTypeShape EntityType="SmartPlayerModel.User" Width="1.5" PointX="0.75" PointY="6.25" />
-        <EntityTypeShape EntityType="SmartPlayerModel.Song" Width="1.5" PointX="0.75" PointY="1" />
+        <EntityTypeShape EntityType="SmartPlayerModel.Song" Width="2.125" PointX="0.5" PointY="0.875" />
         <EntityTypeShape EntityType="SmartPlayerModel.UserSongVote" Width="1.5" PointX="3" PointY="0.875" />
         <AssociationConnector Association="SmartPlayerModel.FK_UserSongVote_AspNetUsers" />
         <AssociationConnector Association="SmartPlayerModel.FK_UserSongVote_Song" />
+        <EntityTypeShape EntityType="SmartPlayerModel.SongSongCorrelation" Width="1.5" PointX="5.5" PointY="3.375" />
+        <AssociationConnector Association="SmartPlayerModel.FK_SongSongCorrelation_Song" />
+        <AssociationConnector Association="SmartPlayerModel.FK_SongSongCorrelation_Song1" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

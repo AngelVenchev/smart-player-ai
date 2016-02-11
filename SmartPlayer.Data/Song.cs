@@ -17,6 +17,8 @@ namespace SmartPlayer.Data
         public Song()
         {
             this.UserSongVotes = new HashSet<UserSongVote>();
+            this.CorrelationsAsPrimary = new HashSet<SongSongCorrelation>();
+            this.CorrelationsAsSecondary = new HashSet<SongSongCorrelation>();
         }
     
         public int Id { get; set; }
@@ -25,5 +27,7 @@ namespace SmartPlayer.Data
         public double Grade { get; set; }
     
         public virtual ICollection<UserSongVote> UserSongVotes { get; set; }
+        public virtual ICollection<SongSongCorrelation> CorrelationsAsPrimary { get; set; }
+        public virtual ICollection<SongSongCorrelation> CorrelationsAsSecondary { get; set; }
     }
 }
