@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace SmartPlayer.Core.Repositories
 {
@@ -15,7 +16,8 @@ namespace SmartPlayer.Core.Repositories
         public List<User> GetAllExcept(string userId)
         {
             return this.Context.Users
-                .Include("UserSongVote")
+                .Include(x => x.UserSongVotes)
+                .Include(u => u.UserSongVotes.Select(usv => usv.Song))
                 .Where(x => x.Id != userId)
                 .ToList();
         }

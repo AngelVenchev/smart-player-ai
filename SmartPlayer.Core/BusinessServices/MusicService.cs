@@ -60,34 +60,37 @@ namespace SmartPlayer.Core.BusinessServices
 
         public PlayerSongDto GetNextSong(NextSongDto songRequest, string username = null)
         {
-            SmartPlayerEntities context = new SmartPlayerEntities();
-
-            MusicRepository repo = new MusicRepository(context);
-
-            // Add recommendation system logic
-            var currentSong = repo.GetSongById(songRequest.CurrentSongId);
-
-            var excludedSongList = songRequest.PlayedSongIds ?? new List<int>();
-            excludedSongList.Add(currentSong.Id);
-
-            var selectedSong = repo.GetNextSongBasedOnUserAndGrade(currentSong.Grade, excludedSongList);
-
-            var songUrl = string.Format("http://{0}{1}{2}",
-                IpV4Provider.GetLocalIPAddress(),
-                ConfigurationManager.AppSettings["MediaServerLoadPort"],
-                selectedSong.Guid);
-
-            PlayerSongDto song = new PlayerSongDto()
+            using (SmartPlayerEntities context = new SmartPlayerEntities())
             {
-                Id = selectedSong.Id,
-                Name = selectedSong.Name,
-                Url =  songUrl,
-                CurrentUserVote = GetUserRatingForSong(context,username, selectedSong)
-            };
+                MusicRepository repo = new MusicRepository(context);
+                // check username null
+                // if not 
+                // create user repo
+                // get currentUserId
+                PearsonScoreCalculator calculator = new PearsonScoreCalculator(context);
+                var recommendedSongs = calculator.GetBestSongsForUser("asd");
+                var currentSong = repo.GetSongById(songRequest.CurrentSongId);
 
-            context.Dispose();
+                var excludedSongList = songRequest.PlayedSongIds ?? new List<int>();
+                excludedSongList.Add(currentSong.Id);
 
-            return song;
+                var selectedSong = repo.GetNextSongBasedOnUserAndGrade(currentSong.Grade, excludedSongList);
+
+                var songUrl = string.Format("http://{0}{1}{2}",
+                    IpV4Provider.GetLocalIPAddress(),
+                    ConfigurationManager.AppSettings["MediaServerLoadPort"],
+                    selectedSong.Guid);
+
+                PlayerSongDto song = new PlayerSongDto()
+                {
+                    Id = selectedSong.Id,
+                    Name = selectedSong.Name,
+                    Url =  songUrl,
+                    CurrentUserVote = GetUserRatingForSong(context, username, selectedSong)
+                };
+
+                return song;
+            }
         }
 
         public PlayerSongDto GetSong(int songId, string username)

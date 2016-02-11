@@ -1,4 +1,5 @@
-﻿using SmartPlayer.Core.Repositories;
+﻿using SmartPlayer.Core.DTOs;
+using SmartPlayer.Core.Repositories;
 using SmartPlayer.Data;
 using System;
 using System.Collections.Generic;
@@ -8,61 +9,66 @@ using System.Threading.Tasks;
 
 namespace SmartPlayer.Core.SongAnalyzer
 {
-    class PearsonScoreCalculator
+    public class PearsonScoreCalculator
     {
-
-        public List<UserSongVote> getUserSongVotes(string userId)
+        private SmartPlayerEntities _context;
+        public PearsonScoreCalculator(SmartPlayerEntities context)
         {
-            SmartPlayerEntities context = new SmartPlayerEntities();
+            _context = context;
+        }
 
-            UserSongRatingRepository repo = new UserSongRatingRepository(context);
+        public List<UserSongVote> GetUserSongVotes(string userId)
+        {
+            UserSongRatingRepository repo = new UserSongRatingRepository(_context);
 
-            var userSongVotes = repo.GetAll()
-                .Where(x => x.UserId == userId)
-                .ToList();
+            var userSongVotes = repo.GetUserSongVotes(userId);
+
             return userSongVotes;
         }
-        public List<UserSongVote> getSongVotes(int songId)
+
+
+        public List<UserScore> CalculatePearsonScoreForCurrentUser(string userId)
         {
-            SmartPlayerEntities context = new SmartPlayerEntities();
+            List<UserSongVote> currentUserPreference = GetUserSongVotes(userId);
 
-            UserSongRatingRepository repo = new UserSongRatingRepository(context);
-            
-            var songVotes = repo.GetAll()
-                .Where(x => x.SongId == songId)
-                .ToList();
-            return songVotes;
-        }
+            UserRepository userRepo = new UserRepository(_context);
 
-        public List<Tuple<string, double>> calculatePearsonScoreForCurrentUser(string userId)
-        {
-            List<UserSongVote> preference1 = getUserSongVotes(userId);
-
-            SmartPlayerEntities context = new SmartPlayerEntities();
-            UserRepository userRepo = new UserRepository(context);
             var allUsers = userRepo.GetAllExcept(userId);
 
-            List<Tuple<string, double>> scores = new List<Tuple<string, double>>();
+            List<UserScore> scores = new List<UserScore>();
             foreach(User user in allUsers) {
-                List<UserSongVote> preference2 = user.UserSongVotes.ToList();
+                List<UserSongVote> comparedUserPreference = user.UserSongVotes.ToList();
 
-                double score = calculcatePearsonScore(preference1, preference2);
+                double score = CalculcatePearsonScore(currentUserPreference, comparedUserPreference);
 
-                scores.Add(Tuple.Create(user.Id, score));                
+                scores.Add(new UserScore { User = user, Score = score });                
             }
 
-            scores.OrderBy(x => x.Item1).ToList();
-            scores.Take(10).ToList();
+            scores = scores.OrderBy(x => Math.Abs(x.Score)).Take(10).ToList();
             return scores;
         }
 
-        //public List<Tuple<int, double>> calculatePearsonScoreForTopUserSongs(int currentSongId, List<Tuple<string, double>> topTenUsers)
-        //{
-        //    List<Tuple<int, double>> scores = new List<Tuple<int, double>>();
-        //    return scores;
-        //}
+        public List<Song> GetBestSongsForUser(string userId)
+        {
+            List<UserScore> userScores = CalculatePearsonScoreForCurrentUser(userId);
+            List<Song> bestSongs = new List<Song>();
+            foreach (var scoreEntry in userScores)
+            {
+                ICollection<UserSongVote> userVotes = scoreEntry.User.UserSongVotes;
+                if (scoreEntry.Score > 0)
+                {
+                    bestSongs.AddRange(userVotes.OrderBy(x => x.Rating).Select(x => x.Song));                    
+                }
+                else if (scoreEntry.Score < 0)
+                {
+                    bestSongs.AddRange(userVotes.OrderByDescending(x => x.Rating).Select(x => x.Song));
+                }
+            }
 
-        public double calculcatePearsonScore(List<UserSongVote> preferences1, List<UserSongVote> preferences2)
+            return bestSongs;
+        }
+
+        public double CalculcatePearsonScore(List<UserSongVote> preferences1, List<UserSongVote> preferences2)
         {
             preferences1 = preferences1.Where(item => {
                 return preferences2

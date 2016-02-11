@@ -11,5 +11,12 @@ namespace SmartPlayer.Core.Repositories
     {
         public UserSongRatingRepository(SmartPlayerEntities context)
             : base(context) { }
+
+        public List<UserSongVote> GetUserSongVotes(string userId)
+        {
+            return Context.UserSongVotes
+                .Where(x => x.UserId == userId)
+                .ToList();
+        }
     }
 }
