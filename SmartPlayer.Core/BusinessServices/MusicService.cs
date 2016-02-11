@@ -12,6 +12,9 @@ using System.Configuration;
 using System.IO;
 using SmartPlayer.Core.DTOs;
 using SmartPlayer.Core.Utility;
+using DiscogsNet.Model.Search;
+using DiscogsNet.Api;
+using DiscogsNet.Model;
 
 namespace SmartPlayer.Core.BusinessServices
 {
@@ -162,10 +165,24 @@ namespace SmartPlayer.Core.BusinessServices
             return songVote;
         }
 
-        private async Task<bool> UpdateSongMetadata(string token)
+        public async Task<bool> UpdateSongMetadata()
         {
-            // Consume discogs api
-            return await Task<bool>.Run(() => true);
+            try
+            {
+                //Discogs3 api = new Discogs3("SmartPlayer/2.0 +http://www.ritulette.com");
+                Discogs3 api = new Discogs3("SmartPlayer/3.0");
+                SearchQuery query = new SearchQuery();
+                query.Type = SearchItemType.Release;
+                query.Query = "Crawling";
+                query.AddQueryParams(new StringBuilder("token=DyUkPrYKNkITqHXPWDpKuxhkJEGWpkDzFCRDXMVg"));
+                SearchResults results = api.Search(query);
+                var first = results.Results.First() as ReleaseSearchResult;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

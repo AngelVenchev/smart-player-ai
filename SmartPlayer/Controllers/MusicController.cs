@@ -81,12 +81,12 @@ namespace SmartPlayer.Controllers
         }
 
         [Route("UpdateSongsMetadata")]
-        [HttpPost]
-        [Authorize]
-        public async Task<bool> UpdateSongMetadata(string discogsToken)
+        [HttpGet]
+        //[Authorize]
+        public async Task<bool> UpdateSongsMetadata()
         {
             MusicService service = new MusicService();
-            return await service.UpdateSongMetadata(discogsToken);
+            return await service.UpdateSongMetadata();
         }
     }
 }
