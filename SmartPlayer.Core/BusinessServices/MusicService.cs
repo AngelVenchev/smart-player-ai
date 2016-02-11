@@ -22,7 +22,10 @@ namespace SmartPlayer.Core.BusinessServices
             string mediaServerUrlBase = ConfigurationManager.AppSettings["MediaServerSaveBaseUrl"];
             string fullName = Path.Combine(mediaServerUrlBase, guid);
 
-            double songGrade = Analyzer.GetGradeFor(fullName) * 1000000;
+            // Get all songs
+            double songGrade = Analyzer.GetGradeFor(fullName) * 1000000; // pass all songs
+
+            // save all songs-correlations in db
 
             Song song = new Song()
             {

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Mix;
+using MathNet.Numerics.Statistics;
 
 namespace SmartPlayer.Core.SongAnalyzer
 {
@@ -29,6 +30,36 @@ namespace SmartPlayer.Core.SongAnalyzer
             }
             mean = mean / pcm.Length;
             return mean;
+        }
+
+        public static double Pearson(IEnumerable<double> dataA, IEnumerable<double> dataB)
+        {
+            int n = 0;
+            double r = 0.0;
+            double meanA = dataA.Mean();
+            double meanB = dataB.Mean();
+            double sdevA = dataA.StandardDeviation();
+            double sdevB = dataB.StandardDeviation();
+
+            IEnumerator<double> ieA = dataA.GetEnumerator();
+            IEnumerator<double> ieB = dataB.GetEnumerator();
+
+            while (ieA.MoveNext())
+            {
+                if (ieB.MoveNext() == false)
+                {
+                    throw new ArgumentOutOfRangeException("Datasets dataA and dataB need to have the same length.");
+                }
+
+                n++;
+                r += (ieA.Current - meanA) * (ieB.Current - meanB) / (sdevA * sdevB);
+            }
+            if (ieB.MoveNext() == true)
+            {
+                throw new ArgumentOutOfRangeException("Datasets dataA and dataB need to have the same length.");
+            }
+
+            return r / (n - 1);
         }
 
         /// <summary>
