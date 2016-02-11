@@ -18,11 +18,16 @@ namespace SmartPlayer.Core.Repositories
             return Context.Songs.Where(s => s.Name.ToLower().Contains(term.ToLower())).Take(10).ToList();
         }
 
-        public List<Song> GetNextSongBasedOnUserAndGrade(double currentSongGrade)
+        public List<Song> GetNextSongBasedOnUserAndGrade(double currentSongGrade, List<int> excludedIds = null)
         {
-            var query = this.Context.Songs
+            IQueryable<Song> query = this.Context.Songs
                 .Include(x => x.UserSongVotes)
                 .OrderBy(x => Math.Abs(currentSongGrade - x.Grade));
+
+            if(excludedIds != null)
+            {
+                query = query.Where(x => !excludedIds.Contains(x.Id));
+            }
 
             return query.Take(10).ToList();
         }

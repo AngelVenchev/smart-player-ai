@@ -31,78 +31,95 @@ namespace SmartPlayer.Core.BusinessServices
                 Grade = songGrade
             };
 
-            SmartPlayerEntities context = new SmartPlayerEntities();
-            MusicRepository repo = new MusicRepository(context);
+            using(SmartPlayerEntities context = new SmartPlayerEntities())
+            {
+                MusicRepository repo = new MusicRepository(context);
 
-            repo.Create(song);
-
-            context.Dispose(); // TODO find a better way to handle dbcontext
+                repo.Create(song);
+            }
         }
 
         public List<SongDto> GetAllSongs()
         {
-            SmartPlayerEntities context = new SmartPlayerEntities();
+            using(SmartPlayerEntities context = new SmartPlayerEntities())
+            {
+                MusicRepository repo = new MusicRepository(context);
 
-            MusicRepository repo = new MusicRepository(context);
+                var allSongs = repo.GetAll()
+                    .Select(x => new SongDto
+                    {
+                        Id = x.Id,
+                        SongName = x.Name
+                    })
+                    .ToList();
 
-            var allSongs = repo.GetAll()
-                .Select(x => new SongDto
-                {
-                    Id = x.Id,
-                    SongName = x.Name
-                })
-                .ToList();
-
-            context.Dispose();
-
-            return allSongs;
+                return allSongs;
+            }
         }
 
         public PlayerSongDto GetNextSong(NextSongDto songRequest, string username = null)
         {
             using (SmartPlayerEntities context = new SmartPlayerEntities())
             {
-                MusicRepository musicRepo = new MusicRepository(context);
-                var currentSong = musicRepo.GetSongById(songRequest.CurrentSongId);
-                var excludedSongIdList = songRequest.PlayedSongIds;
+                var selectedSong = GetNextSong(songRequest, username, context);
+                var songUrl = ExtractSongUrl(selectedSong);
 
-                var recommendedSongs = GetRecommendedSongsForUser(username, context);
-                recommendedSongs = recommendedSongs.Where(x => !excludedSongIdList.Contains(x.Id)).ToList();
-
-                var similarSongs = musicRepo.GetNextSongBasedOnUserAndGrade(currentSong.Grade);
-                similarSongs = similarSongs.Where(x => !excludedSongIdList.Contains(x.Id)).ToList();
-
-                var bestSongsForUser = new List<Song>();
-                if(recommendedSongs.Any() && similarSongs.Any())
-                {
-                    bestSongsForUser = recommendedSongs.Intersect(similarSongs).ToList();
-                    if(!bestSongsForUser.Any())
-                    {
-                        bestSongsForUser = recommendedSongs.Union(similarSongs).ToList();
-                    }
-                }
-                else
-                {
-                    bestSongsForUser = recommendedSongs.Union(similarSongs).ToList();
-                }
-
-                var selectedSong = bestSongsForUser.First();
-
-                var songUrl = string.Format("http://{0}{1}{2}",
-                    IpV4Provider.GetLocalIPAddress(),
-                    ConfigurationManager.AppSettings["MediaServerLoadPort"],
-                    selectedSong.Guid);
-
-                PlayerSongDto song = new PlayerSongDto()
-                {
-                    Id = selectedSong.Id,
-                    Name = selectedSong.Name,
-                    Url =  songUrl,
-                    CurrentUserVote = GetUserRatingForSong(context, username, selectedSong)
-                };
+                PlayerSongDto song = ExtractSongResult(username, context, selectedSong, songUrl);
 
                 return song;
             }
+        }
+
+        private static string ExtractSongUrl(Song selectedSong)
+        {
+            var songUrl = string.Format("http://{0}{1}{2}",
+                IpV4Provider.GetLocalIPAddress(),
+                ConfigurationManager.AppSettings["MediaServerLoadPort"],
+                selectedSong.Guid);
+            return songUrl;
+        }
+
+        private static Song GetNextSong(NextSongDto songRequest, string username, SmartPlayerEntities context)
+        {
+            MusicRepository musicRepo = new MusicRepository(context);
+            var currentSong = musicRepo.GetSongById(songRequest.CurrentSongId);
+            var excludedSongIdList = songRequest.PlayedSongIds;
+
+            var recommendedSongs = GetRecommendedSongsForUser(username, context);
+            recommendedSongs = recommendedSongs.Where(x => !excludedSongIdList.Contains(x.Id)).ToList();
+
+            var similarSongs = musicRepo.GetNextSongBasedOnUserAndGrade(currentSong.Grade);
+            similarSongs = similarSongs.Where(x => !excludedSongIdList.Contains(x.Id)).ToList();
+
+            var safetySet = new Lazy<List<Song>>(() => musicRepo.GetNextSongBasedOnUserAndGrade(currentSong.Grade, excludedSongIdList));
+
+            var selectedSong = GetNextSong(recommendedSongs, similarSongs, safetySet);
+            return selectedSong;
+        }
+
+        private static Song GetNextSong(List<Song> recommendedSongs, List<Song> similarSongs, Lazy<List<Song>> safetySet)
+        {
+            var bestSongsForUser = new List<Song>();
+            if (recommendedSongs.Any() && similarSongs.Any())
+            {
+                bestSongsForUser = recommendedSongs.Intersect(similarSongs).ToList();
+                if (!bestSongsForUser.Any())
+                {
+                    bestSongsForUser = recommendedSongs.Union(similarSongs).ToList();
+                }
+            }
+            else
+            {
+                bestSongsForUser = recommendedSongs.Union(similarSongs).ToList();
+            }
+
+            if(!bestSongsForUser.Any())
+            {
+                bestSongsForUser = safetySet.Value;
+            }
+
+            var selectedSong = bestSongsForUser.First();
+            return selectedSong;
         }
 
         private static List<Song> GetRecommendedSongsForUser(string username, SmartPlayerEntities context)
@@ -121,16 +138,22 @@ namespace SmartPlayer.Core.BusinessServices
 
         public PlayerSongDto GetSong(int songId, string username)
         {
-            SmartPlayerEntities context = new SmartPlayerEntities();
-            MusicRepository repo = new MusicRepository(context);
+            using(SmartPlayerEntities context = new SmartPlayerEntities())
+            {
+                MusicRepository repo = new MusicRepository(context);
 
-            var requestedSong = repo.GetSongById(songId);
+                var requestedSong = repo.GetSongById(songId);
 
-            var songUrl = string.Format("http://{0}{1}{2}",
-                IpV4Provider.GetLocalIPAddress(),
-                ConfigurationManager.AppSettings["MediaServerLoadPort"],
-                requestedSong.Guid);
+                var songUrl = ExtractSongUrl(requestedSong);
 
+                PlayerSongDto song = ExtractSongResult(username, context, requestedSong, songUrl);
+
+                return song;
+            }
+        }
+
+        private PlayerSongDto ExtractSongResult(string username, SmartPlayerEntities context, Song requestedSong, string songUrl)
+        {
             PlayerSongDto song = new PlayerSongDto()
             {
                 Id = requestedSong.Id,
@@ -138,39 +161,34 @@ namespace SmartPlayer.Core.BusinessServices
                 Url = songUrl,
                 CurrentUserVote = GetUserRatingForSong(context, username, requestedSong)
             };
-
-            context.Dispose();
-
             return song;
         }
 
         public List<SongDto> SearchSong(string query)
         {
-            SmartPlayerEntities context = new SmartPlayerEntities();
-            MusicRepository repo = new MusicRepository(context);
-
-            var requestedSongs = repo.SearchByTerm(query);
-
-            context.Dispose();
-
-            return requestedSongs.Select(x => new SongDto() { Id = x.Id, SongName = x.Name }).ToList();
+            using(SmartPlayerEntities context = new SmartPlayerEntities())
+            {
+                MusicRepository repo = new MusicRepository(context);
+                var requestedSongs = repo.SearchByTerm(query);
+                return requestedSongs.Select(x => new SongDto() { Id = x.Id, SongName = x.Name }).ToList();
+            }
         }
 
         public void RateSong(SongRatingDto rating, string userName)
         {
-            SmartPlayerEntities context = new SmartPlayerEntities();
+            using (SmartPlayerEntities context = new SmartPlayerEntities())
+            {
+                UserRepository userRepo = new UserRepository(context);
 
-            UserRepository userRepo = new UserRepository(context);
-
-            User currentUser = userRepo.GetAll().First(x => x.Email == userName);
-
-            context.UserSongVotes.Add(new UserSongVote()
-                {
-                    Rating = rating.Rating,
-                    SongId = rating.SongId,
-                    UserId = currentUser.Id
-                });
-            context.SaveChanges();
+                User currentUser = userRepo.GetAll().First(x => x.Email == userName);
+                context.UserSongVotes.Add(new UserSongVote()
+                    {
+                        Rating = rating.Rating,
+                        SongId = rating.SongId,
+                        UserId = currentUser.Id
+                    });
+                context.SaveChanges();
+            }
         }
 
         private int? GetUserRatingForSong(SmartPlayerEntities context, string username, Song song)
