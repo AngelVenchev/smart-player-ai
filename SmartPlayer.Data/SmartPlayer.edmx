@@ -35,7 +35,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PrimarySongId" Type="int" Nullable="false" />
           <Property Name="SecondarySongId" Type="int" Nullable="false" />
           <Property Name="CorrelationScore" Type="float" Nullable="false" />
