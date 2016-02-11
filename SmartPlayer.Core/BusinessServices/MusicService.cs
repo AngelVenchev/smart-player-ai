@@ -36,8 +36,7 @@ namespace SmartPlayer.Core.BusinessServices
                 Song song = new Song()
                 {
                     Name = originalFileName,
-                    Guid = guid,
-                    Grade = 5
+                    Guid = guid
                 };
 
                 for(int i = 0; i < correlationCoefficients.Count; i++)
@@ -92,16 +91,15 @@ namespace SmartPlayer.Core.BusinessServices
         private static Song GetNextSong(NextSongDto songRequest, string username, SmartPlayerEntities context)
         {
             MusicRepository musicRepo = new MusicRepository(context);
-            var currentSong = musicRepo.GetSongById(songRequest.CurrentSongId);
             var excludedSongIdList = songRequest.PlayedSongIds;
 
             var recommendedSongs = GetRecommendedSongsForUser(username, context);
             recommendedSongs = recommendedSongs.Where(x => !excludedSongIdList.Contains(x.Id)).ToList();
 
-            var similarSongs = musicRepo.GetNextSongBasedOnUserAndGrade(currentSong.Grade);
+            var similarSongs = musicRepo.GetNextSongBasedOnUserAndGrade(songRequest.CurrentSongId);
             similarSongs = similarSongs.Where(x => !excludedSongIdList.Contains(x.Id)).ToList();
 
-            var safetySet = new Lazy<List<Song>>(() => musicRepo.GetNextSongBasedOnUserAndGrade(currentSong.Grade, excludedSongIdList));
+            var safetySet = new Lazy<List<Song>>(() => musicRepo.GetNextSongBasedOnUserAndGrade(songRequest.CurrentSongId, excludedSongIdList));
 
             var selectedSong = GetNextSong(recommendedSongs, similarSongs, safetySet);
             return selectedSong;

@@ -24,7 +24,6 @@ namespace SmartPlayer.Data
         public int Id { get; set; }
         public string Name { get; set; }
         public string Guid { get; set; }
-        public double Grade { get; set; }
     
         public virtual ICollection<UserSongVote> UserSongVotes { get; set; }
         public virtual ICollection<SongSongCorrelation> CorrelationsAsPrimary { get; set; }

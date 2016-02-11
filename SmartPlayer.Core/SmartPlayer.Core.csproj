@@ -67,6 +67,7 @@
     <Compile Include="DTOs\PlayerSongDto.cs" />
     <Compile Include="DTOs\SongDto.cs" />
     <Compile Include="DTOs\SongRatingDto.cs" />
+    <Compile Include="DTOs\SongSongCoefficient.cs" />
     <Compile Include="DTOs\UserScore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\BaseRepository.cs" />
