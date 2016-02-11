@@ -72,6 +72,9 @@
     <Compile Include="Song.cs">
       <DependentUpon>SmartPlayer.tt</DependentUpon>
     </Compile>
+    <Compile Include="SongSongCorrelation.cs">
+      <DependentUpon>SmartPlayer.tt</DependentUpon>
+    </Compile>
     <Compile Include="User.cs">
       <DependentUpon>SmartPlayer.tt</DependentUpon>
     </Compile>
