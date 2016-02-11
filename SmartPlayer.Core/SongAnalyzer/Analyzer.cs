@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Mix;
 using MathNet.Numerics.Statistics;
+using SmartPlayer.Core.DTOs;
 
 namespace SmartPlayer.Core.SongAnalyzer
 {
@@ -13,7 +14,7 @@ namespace SmartPlayer.Core.SongAnalyzer
     {
         private static bool _initialized = false;
 
-        public static double GetGradeFor(string filename)
+        public static List<double> GetCorreleationCoefficientsFor(string filename, List<AnalyzableSong> allCurrentSongs)
         {
             if(!_initialized)
             {
@@ -23,16 +24,26 @@ namespace SmartPlayer.Core.SongAnalyzer
             }
 
             float[] pcm = ReadMonoFromFile(filename, 44100, 0, 0);
-            double mean = 0;
-            for (int i = 0; i < pcm.Length; i++)
+            var currentSongPcms = new List<float[]>();
+            foreach(var song in allCurrentSongs)
             {
-                mean += pcm[i];
+                currentSongPcms.Add(ReadMonoFromFile(song.PhysicalFileName, 44100, 0, 0));
             }
-            mean = mean / pcm.Length;
-            return mean;
+
+            var correlationCoefficients = new List<double>();
+            foreach (var otherPcm in currentSongPcms)
+            {
+                float[] shorterArray = pcm.Length < otherPcm.Length ? pcm : otherPcm;
+                float[] longerArray = pcm.Length > otherPcm.Length ? pcm : otherPcm;
+
+                longerArray = longerArray.Skip((longerArray.Length - shorterArray.Length) / 2).Take(shorterArray.Length).ToArray();
+
+                correlationCoefficients.Add(Pearson(shorterArray, longerArray)); // both are the same size
+            }
+            return correlationCoefficients;
         }
 
-        public static double Pearson(IEnumerable<double> dataA, IEnumerable<double> dataB)
+        public static double Pearson(IEnumerable<float> dataA, IEnumerable<float> dataB)
         {
             int n = 0;
             double r = 0.0;
@@ -41,8 +52,8 @@ namespace SmartPlayer.Core.SongAnalyzer
             double sdevA = dataA.StandardDeviation();
             double sdevB = dataB.StandardDeviation();
 
-            IEnumerator<double> ieA = dataA.GetEnumerator();
-            IEnumerator<double> ieB = dataB.GetEnumerator();
+            IEnumerator<float> ieA = dataA.GetEnumerator();
+            IEnumerator<float> ieB = dataB.GetEnumerator();
 
             while (ieA.MoveNext())
             {
@@ -70,7 +81,7 @@ namespace SmartPlayer.Core.SongAnalyzer
         /// <param name="milliseconds">The wavelength in miliseconds (0 for whole song)</param>
         /// <param name="startmillisecond">The first milisecond of the wavelength</param>
         /// <returns></returns>
-        private static float[] ReadMonoFromFile(string filename, int samplerate = 44100, int milliseconds = 0, int startmillisecond= 0)
+        private static float[] ReadMonoFromFile(string filename, int samplerate = 44100, int milliseconds = 0, int startmillisecond = 0)
         {
             int totalmilliseconds = milliseconds <= 0 ? Int32.MaxValue : milliseconds + startmillisecond;
             float[] data = null;
@@ -126,6 +137,6 @@ namespace SmartPlayer.Core.SongAnalyzer
             else
                 throw new Exception(Bass.BASS_ErrorGetCode().ToString());
             return data;
-        } 
+        }
     }
 }

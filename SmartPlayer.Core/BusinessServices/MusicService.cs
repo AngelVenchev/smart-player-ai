@@ -21,22 +21,29 @@ namespace SmartPlayer.Core.BusinessServices
         {
             string mediaServerUrlBase = ConfigurationManager.AppSettings["MediaServerSaveBaseUrl"];
             string fullName = Path.Combine(mediaServerUrlBase, guid);
-
-            // Get all songs
-            double songGrade = Analyzer.GetGradeFor(fullName) * 1000000; // pass all songs
-
-            // save all songs-correlations in db
-
-            Song song = new Song()
-            {
-                Name = originalFileName,
-                Guid = guid,
-                Grade = songGrade
-            };
-
             using(SmartPlayerEntities context = new SmartPlayerEntities())
             {
                 MusicRepository repo = new MusicRepository(context);
+
+                var allSongs = repo.GetAll()
+                    .Select(x => new AnalyzableSong { Id = x.Id, PhysicalFileName = x.Guid })
+                    .ToList();
+
+                allSongs.ForEach(x => x.PhysicalFileName = Path.Combine(mediaServerUrlBase, x.PhysicalFileName));
+
+                List<double> correlationCoefficients = Analyzer.GetCorreleationCoefficientsFor(fullName, allSongs);
+
+                Song song = new Song()
+                {
+                    Name = originalFileName,
+                    Guid = guid,
+                    Grade = 5
+                };
+
+                for(int i = 0; i < correlationCoefficients.Count; i++)
+                {
+                    song.CorrelationsAsPrimary.Add(new SongSongCorrelation { SecondarySongId = allSongs[i].Id, CorrelationScore = correlationCoefficients[i] });
+                }
 
                 repo.Create(song);
             }

@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BusinessServices\MusicService.cs" />
+    <Compile Include="DTOs\AnalyzableSong.cs" />
     <Compile Include="DTOs\NextSongDto.cs" />
     <Compile Include="DTOs\PlayerSongDto.cs" />
     <Compile Include="DTOs\SongDto.cs" />
