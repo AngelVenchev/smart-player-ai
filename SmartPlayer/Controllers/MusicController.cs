@@ -28,10 +28,14 @@ namespace SmartPlayer.Controllers
             await Request.Content.ReadAsMultipartAsync(streamProvider);
 
             MusicService service = new MusicService();
-            string fileOriginalName = streamProvider.Contents[0].Headers.ContentDisposition.FileName.Trim(new char[] { '\"' });
-            string fileGuid = Path.GetFileName(streamProvider.FileData.First().LocalFileName);
+            for (int i = 0; i < streamProvider.Contents.Count; i++)
+            {
+                string fileOriginalName = streamProvider.Contents[i].Headers.ContentDisposition.FileName.Trim(new char[] { '\"' });
+                string fileGuid = Path.GetFileName(streamProvider.FileData.First().LocalFileName);
 
-            service.Store(fileOriginalName, fileGuid);
+                service.Store(fileOriginalName, fileGuid);
+            }
+
         }
 
         [Route("GetAll")]
