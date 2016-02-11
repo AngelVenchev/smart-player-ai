@@ -62,13 +62,16 @@ namespace SmartPlayer.Core.BusinessServices
         {
             using (SmartPlayerEntities context = new SmartPlayerEntities())
             {
+                string userId = null;
                 MusicRepository repo = new MusicRepository(context);
-                // check username null
-                // if not 
-                // create user repo
-                // get currentUserId
+                if (username != null)
+                {
+                    UserRepository userRepo = new UserRepository(context);
+                    userId = userRepo.GetUserByUsername(username).Id;                    
+                }
+
                 PearsonScoreCalculator calculator = new PearsonScoreCalculator(context);
-                var recommendedSongs = calculator.GetBestSongsForUser("asd");
+                var recommendedSongs = calculator.GetBestSongsForUser(userId);
                 var currentSong = repo.GetSongById(songRequest.CurrentSongId);
 
                 var excludedSongList = songRequest.PlayedSongIds ?? new List<int>();
