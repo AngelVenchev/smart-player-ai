@@ -74,7 +74,11 @@ namespace SmartPlayer.Core.BusinessServices
                 var excludedSongList = songRequest.PlayedSongIds ?? new List<int>();
                 excludedSongList.Add(currentSong.Id);
 
-                var selectedSong = repo.GetNextSongBasedOnUserAndGrade(currentSong.Grade, excludedSongList);
+                var similarSongs = repo.GetNextSongBasedOnUserAndGrade(currentSong.Grade, excludedSongList);
+
+                var intersection = recommendedSongs.Intersect(similarSongs);
+
+                var selectedSong = intersection.OrderBy(x => x.Grade).First();
 
                 var songUrl = string.Format("http://{0}{1}{2}",
                     IpV4Provider.GetLocalIPAddress(),
