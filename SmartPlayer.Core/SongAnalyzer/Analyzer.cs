@@ -17,7 +17,7 @@ namespace SmartPlayer.Core.SongAnalyzer
             if(!_initialized)
             {
                 _initialized = Bass.BASS_Init(0, 44100, BASSInit.BASS_DEVICE_NOSPEAKER, IntPtr.Zero);
-                if (!_initialized)
+                if (!_initialized && Bass.BASS_ErrorGetCode().ToString() != "BASS_ERROR_ALREADY")
                     throw new Exception(Bass.BASS_ErrorGetCode().ToString());
             }
 
