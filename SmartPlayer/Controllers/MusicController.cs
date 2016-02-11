@@ -21,7 +21,7 @@ namespace SmartPlayer.Controllers
         [Route("Upload")]
         [HttpPost]
         [ValidateMimeMultipartContentFilter]
-        public async Task UploadSingleFile()
+        public async Task UploadFiles()
         {
             var serverUploadFolder = ConfigurationManager.AppSettings["MediaServerSaveBaseUrl"];
             var streamProvider = new MultipartFormDataStreamProvider(serverUploadFolder);
@@ -31,7 +31,7 @@ namespace SmartPlayer.Controllers
             for (int i = 0; i < streamProvider.Contents.Count; i++)
             {
                 string fileOriginalName = streamProvider.Contents[i].Headers.ContentDisposition.FileName.Trim(new char[] { '\"' });
-                string fileGuid = Path.GetFileName(streamProvider.FileData.First().LocalFileName);
+                string fileGuid = Path.GetFileName(streamProvider.FileData[i].LocalFileName);
 
                 service.Store(fileOriginalName, fileGuid);
             }
