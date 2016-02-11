@@ -54,14 +54,14 @@ namespace SmartPlayer.Core.SongAnalyzer
             List<Song> bestSongs = new List<Song>();
             foreach (var scoreEntry in userScores)
             {
-                ICollection<UserSongVote> userVotes = scoreEntry.User.UserSongVotes;
+                var userVotes = scoreEntry.User.UserSongVotes;
                 if (scoreEntry.Score > 0)
                 {
-                    bestSongs.AddRange(userVotes.OrderBy(x => x.Rating).Select(x => x.Song));                    
+                    bestSongs.AddRange(userVotes.Where(x => x.Rating > 3.5).Select(x => x.Song));
                 }
                 else if (scoreEntry.Score < 0)
                 {
-                    bestSongs.AddRange(userVotes.OrderByDescending(x => x.Rating).Select(x => x.Song));
+                    bestSongs.AddRange(userVotes.Where(x => x.Rating < 2.5).Select(x => x.Song));
                 }
             }
 
