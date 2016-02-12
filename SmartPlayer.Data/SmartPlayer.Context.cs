@@ -27,7 +27,7 @@ namespace SmartPlayer.Data
     
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Song> Songs { get; set; }
-        public virtual DbSet<UserSongVote> UserSongVotes { get; set; }
         public virtual DbSet<SongSongCorrelation> SongSongCorrelations { get; set; }
+        public virtual DbSet<UserSongVote> UserSongVotes { get; set; }
     }
 }

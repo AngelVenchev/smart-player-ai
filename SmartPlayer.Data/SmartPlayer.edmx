@@ -126,16 +126,12 @@
         <EntityContainer Name="SmartPlayerEntities" annotation:LazyLoadingEnabled="true" >
           <EntitySet Name="Users" EntityType="SmartPlayerModel.User" />
           <EntitySet Name="Songs" EntityType="SmartPlayerModel.Song" />
+          <EntitySet Name="SongSongCorrelations" EntityType="SmartPlayerModel.SongSongCorrelation" />
           <EntitySet Name="UserSongVotes" EntityType="SmartPlayerModel.UserSongVote" />
           <AssociationSet Name="FK_UserSongVote_AspNetUsers" Association="SmartPlayerModel.FK_UserSongVote_AspNetUsers">
             <End Role="AspNetUser" EntitySet="Users" />
             <End Role="UserSongVote" EntitySet="UserSongVotes" />
           </AssociationSet>
-          <AssociationSet Name="FK_UserSongVote_Song" Association="SmartPlayerModel.FK_UserSongVote_Song">
-            <End Role="Song" EntitySet="Songs" />
-            <End Role="UserSongVote" EntitySet="UserSongVotes" />
-          </AssociationSet>
-          <EntitySet Name="SongSongCorrelations" EntityType="SmartPlayerModel.SongSongCorrelation" />
           <AssociationSet Name="FK_SongSongCorrelation_Song" Association="SmartPlayerModel.FK_SongSongCorrelation_Song">
             <End Role="Song" EntitySet="Songs" />
             <End Role="SongSongCorrelation" EntitySet="SongSongCorrelations" />
@@ -143,6 +139,10 @@
           <AssociationSet Name="FK_SongSongCorrelation_Song1" Association="SmartPlayerModel.FK_SongSongCorrelation_Song1">
             <End Role="Song" EntitySet="Songs" />
             <End Role="SongSongCorrelation" EntitySet="SongSongCorrelations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserSongVote_Song" Association="SmartPlayerModel.FK_UserSongVote_Song">
+            <End Role="Song" EntitySet="Songs" />
+            <End Role="UserSongVote" EntitySet="UserSongVotes" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="User">
@@ -171,9 +171,20 @@
           <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Guid" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Grade" Type="Double" Nullable="false" />
-          <NavigationProperty Name="UserSongVotes" Relationship="SmartPlayerModel.FK_UserSongVote_Song" FromRole="Song" ToRole="UserSongVote" />
           <NavigationProperty Name="CorrelationsAsPrimary" Relationship="SmartPlayerModel.FK_SongSongCorrelation_Song" FromRole="Song" ToRole="SongSongCorrelation" />
           <NavigationProperty Name="CorrelationsAsSecondary" Relationship="SmartPlayerModel.FK_SongSongCorrelation_Song1" FromRole="Song" ToRole="SongSongCorrelation" />
+          <NavigationProperty Name="UserSongVotes" Relationship="SmartPlayerModel.FK_UserSongVote_Song" FromRole="Song" ToRole="UserSongVote" />
+        </EntityType>
+        <EntityType Name="SongSongCorrelation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PrimarySongId" Type="Int32" Nullable="false" />
+          <Property Name="SecondarySongId" Type="Int32" Nullable="false" />
+          <Property Name="CorrelationScore" Type="Double" Nullable="false" />
+          <NavigationProperty Name="PrimarySong" Relationship="SmartPlayerModel.FK_SongSongCorrelation_Song" FromRole="SongSongCorrelation" ToRole="Song" />
+          <NavigationProperty Name="SecondarySong" Relationship="SmartPlayerModel.FK_SongSongCorrelation_Song1" FromRole="SongSongCorrelation" ToRole="Song" />
         </EntityType>
         <EntityType Name="UserSongVote">
           <Key>
@@ -183,7 +194,7 @@
           <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="SongId" Type="Int32" Nullable="false" />
           <Property Name="Rating" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="AspNetUser" Relationship="SmartPlayerModel.FK_UserSongVote_AspNetUsers" FromRole="UserSongVote" ToRole="AspNetUser" />
+          <NavigationProperty Name="User" Relationship="SmartPlayerModel.FK_UserSongVote_AspNetUsers" FromRole="UserSongVote" ToRole="AspNetUser" />
           <NavigationProperty Name="Song" Relationship="SmartPlayerModel.FK_UserSongVote_Song" FromRole="UserSongVote" ToRole="Song" />
         </EntityType>
         <Association Name="FK_UserSongVote_AspNetUsers">
@@ -198,29 +209,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_UserSongVote_Song">
-          <End Type="SmartPlayerModel.Song" Role="Song" Multiplicity="1" />
-          <End Type="SmartPlayerModel.UserSongVote" Role="UserSongVote" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Song">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UserSongVote">
-              <PropertyRef Name="SongId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="SongSongCorrelation">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="PrimarySongId" Type="Int32" Nullable="false" />
-          <Property Name="SecondarySongId" Type="Int32" Nullable="false" />
-          <Property Name="CorrelationScore" Type="Double" Nullable="false" />
-          <NavigationProperty Name="PrimarySong" Relationship="SmartPlayerModel.FK_SongSongCorrelation_Song" FromRole="SongSongCorrelation" ToRole="Song" />
-          <NavigationProperty Name="SecondarySong" Relationship="SmartPlayerModel.FK_SongSongCorrelation_Song1" FromRole="SongSongCorrelation" ToRole="Song" />
-        </EntityType>
         <Association Name="FK_SongSongCorrelation_Song">
           <End Type="SmartPlayerModel.Song" Role="Song" Multiplicity="1" />
           <End Type="SmartPlayerModel.SongSongCorrelation" Role="SongSongCorrelation" Multiplicity="*" />
@@ -242,6 +230,18 @@
             </Principal>
             <Dependent Role="SongSongCorrelation">
               <PropertyRef Name="SecondarySongId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserSongVote_Song">
+          <End Type="SmartPlayerModel.Song" Role="Song" Multiplicity="1" />
+          <End Type="SmartPlayerModel.UserSongVote" Role="UserSongVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Song">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserSongVote">
+              <PropertyRef Name="SongId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -279,22 +279,22 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserSongVotes">
-            <EntityTypeMapping TypeName="SmartPlayerModel.UserSongVote">
-              <MappingFragment StoreEntitySet="UserSongVote">
-                <ScalarProperty Name="Rating" ColumnName="Rating" />
-                <ScalarProperty Name="SongId" ColumnName="SongId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="SongSongCorrelations">
             <EntityTypeMapping TypeName="SmartPlayerModel.SongSongCorrelation">
               <MappingFragment StoreEntitySet="SongSongCorrelation">
                 <ScalarProperty Name="CorrelationScore" ColumnName="CorrelationScore" />
                 <ScalarProperty Name="SecondarySongId" ColumnName="SecondarySongId" />
                 <ScalarProperty Name="PrimarySongId" ColumnName="PrimarySongId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserSongVotes">
+            <EntityTypeMapping TypeName="SmartPlayerModel.UserSongVote">
+              <MappingFragment StoreEntitySet="UserSongVote">
+                <ScalarProperty Name="Rating" ColumnName="Rating" />
+                <ScalarProperty Name="SongId" ColumnName="SongId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

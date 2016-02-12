@@ -21,19 +21,28 @@ namespace SmartPlayer.Core.BusinessServices
         {
             string mediaServerUrlBase = ConfigurationManager.AppSettings["MediaServerSaveBaseUrl"];
             string fullName = Path.Combine(mediaServerUrlBase, guid);
-
-            double songGrade = Analyzer.GetGradeFor(fullName) * 1000000;
-
-            Song song = new Song()
-            {
-                Name = originalFileName,
-                Guid = guid,
-                Grade = songGrade
-            };
-
             using(SmartPlayerEntities context = new SmartPlayerEntities())
             {
                 MusicRepository repo = new MusicRepository(context);
+
+                var allSongs = repo.GetAll()
+                    .Select(x => new AnalyzableSong { Id = x.Id, PhysicalFileName = x.Guid })
+                    .ToList();
+
+                allSongs.ForEach(x => x.PhysicalFileName = Path.Combine(mediaServerUrlBase, x.PhysicalFileName));
+
+                List<double> correlationCoefficients = Analyzer.GetCorreleationCoefficientsFor(fullName, allSongs);
+
+                Song song = new Song()
+                {
+                    Name = originalFileName,
+                    Guid = guid
+                };
+
+                for(int i = 0; i < correlationCoefficients.Count; i++)
+                {
+                    song.CorrelationsAsPrimary.Add(new SongSongCorrelation { SecondarySongId = allSongs[i].Id, CorrelationScore = correlationCoefficients[i] });
+                }
 
                 repo.Create(song);
             }
@@ -82,16 +91,15 @@ namespace SmartPlayer.Core.BusinessServices
         private static Song GetNextSong(NextSongDto songRequest, string username, SmartPlayerEntities context)
         {
             MusicRepository musicRepo = new MusicRepository(context);
-            var currentSong = musicRepo.GetSongById(songRequest.CurrentSongId);
             var excludedSongIdList = songRequest.PlayedSongIds;
 
             var recommendedSongs = GetRecommendedSongsForUser(username, context);
             recommendedSongs = recommendedSongs.Where(x => !excludedSongIdList.Contains(x.Id)).ToList();
 
-            var similarSongs = musicRepo.GetNextSongBasedOnUserAndGrade(currentSong.Grade);
+            var similarSongs = musicRepo.GetNextSongBasedOnUserAndGrade(songRequest.CurrentSongId);
             similarSongs = similarSongs.Where(x => !excludedSongIdList.Contains(x.Id)).ToList();
 
-            var safetySet = new Lazy<List<Song>>(() => musicRepo.GetNextSongBasedOnUserAndGrade(currentSong.Grade, excludedSongIdList));
+            var safetySet = new Lazy<List<Song>>(() => musicRepo.GetNextSongBasedOnUserAndGrade(songRequest.CurrentSongId, excludedSongIdList));
 
             var selectedSong = GetNextSong(recommendedSongs, similarSongs, safetySet);
             return selectedSong;
