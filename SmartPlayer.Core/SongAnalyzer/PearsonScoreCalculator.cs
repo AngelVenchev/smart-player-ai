@@ -99,7 +99,7 @@ namespace SmartPlayer.Core.SongAnalyzer
             double sum2Sq = 0;
             foreach (UserSongVote p in preferences2)
             {
-                if (preferences1.Contains(p)) {
+                if (preferences1.Any(x => x.SongId == p.SongId)) {
                     sum2 += p.Rating;
                     sum2Sq += Math.Pow(p.Rating, 2);
                 }
@@ -108,7 +108,7 @@ namespace SmartPlayer.Core.SongAnalyzer
             double pSum = 0;
             foreach (UserSongVote p in preferences1)
             {
-                pSum += p.Rating * preferences2[preferences2.IndexOf(p)].Rating;
+                    pSum += p.Rating * preferences2.First(x => x.SongId == p.SongId).Rating;
             }
 
             double numerator = pSum - ((sum1 * sum2) / n);
