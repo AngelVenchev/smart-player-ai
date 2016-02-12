@@ -18,59 +18,81 @@ namespace SmartPlayer.Core.SongAnalyzer
         {
             if(!_initialized)
             {
-                _initialized = Bass.BASS_Init(0, 44100, BASSInit.BASS_DEVICE_NOSPEAKER, IntPtr.Zero);
+                _initialized = Bass.BASS_Init(0, 1000, BASSInit.BASS_DEVICE_NOSPEAKER, IntPtr.Zero);
                 if (!_initialized && Bass.BASS_ErrorGetCode().ToString() != "BASS_ERROR_ALREADY")
                     throw new Exception(Bass.BASS_ErrorGetCode().ToString());
             }
 
-            float[] pcm = ReadMonoFromFile(filename, 44100, 0, 0);
-            var currentSongPcms = new List<float[]>();
+            float[] mainPcm = ReadMonoFromFile(filename, 1000, 30000, 30000);
+            string mainMarkovChain = ConvertToMarkovChain(mainPcm);
+            var currentSongMarkovChains = new List<string>();
             foreach(var song in allCurrentSongs)
             {
-                currentSongPcms.Add(ReadMonoFromFile(song.PhysicalFileName, 44100, 0, 0));
+                var currentSongPcm = ReadMonoFromFile(song.PhysicalFileName, 1000, 30000, 30000);
+                currentSongMarkovChains.Add(ConvertToMarkovChain(currentSongPcm));
+                // convert pcms to markov chains
             }
 
             var correlationCoefficients = new List<double>();
-            foreach (var otherPcm in currentSongPcms)
+            foreach (var otherChain in currentSongMarkovChains)
             {
-                float[] shorterArray = pcm.Length < otherPcm.Length ? pcm : otherPcm;
-                float[] longerArray = pcm.Length > otherPcm.Length ? pcm : otherPcm;
-
-                longerArray = longerArray.Skip((longerArray.Length - shorterArray.Length) / 2).Take(shorterArray.Length).ToArray();
-
-                correlationCoefficients.Add(Pearson(shorterArray, longerArray) * 1000); // both are the same size
+                var comparisonResults = LongestCommonSubstring(mainMarkovChain, otherChain);
+                correlationCoefficients.Add(comparisonResults);
             }
             return correlationCoefficients;
         }
 
-        public static double Pearson(IEnumerable<float> dataA, IEnumerable<float> dataB)
+        public static string ConvertToMarkovChain(float[] pcm)
         {
-            int n = 0;
-            double r = 0.0;
-            double meanA = dataA.Mean();
-            double meanB = dataB.Mean();
-            double sdevA = dataA.StandardDeviation();
-            double sdevB = dataB.StandardDeviation();
-
-            IEnumerator<float> ieA = dataA.GetEnumerator();
-            IEnumerator<float> ieB = dataB.GetEnumerator();
-
-            while (ieA.MoveNext())
+            StringBuilder builder = new StringBuilder(pcm.Length / 2 - 1);
+            char value = '=';
+            for(int i = 2; i < pcm.Length; i+=2)
             {
-                if (ieB.MoveNext() == false)
+                value = '=';
+                if(pcm[i] != pcm[i - 1])
                 {
-                    throw new ArgumentOutOfRangeException("Datasets dataA and dataB need to have the same length.");
+                    value = pcm[i] > pcm[i - 1] ? '>' : '<';
                 }
-
-                n++;
-                r += (ieA.Current - meanA) * (ieB.Current - meanB) / (sdevA * sdevB);
+                builder.Append(value);
             }
-            if (ieB.MoveNext() == true)
+            return builder.ToString();
+        }
+
+        public static int LongestCommonSubstring(string str1, string str2)
+        {
+            int[][] num = new int[str1.Length][];
+            for(int i = 0; i < num.Length; i++)
             {
-                throw new ArgumentOutOfRangeException("Datasets dataA and dataB need to have the same length.");
+                num[i] = new int[str2.Length];
+            }
+            int maxlen = 0;
+            List<string> result = new List<string>();
+            StringBuilder sequenceBuilder = new StringBuilder();
+
+            for (int i = 0; i < str1.Length; i++)
+            {
+                for (int j = 0; j < str2.Length; j++)
+                {
+                    if (str1[i] != str2[j])
+                        num[i][j] = 0;
+                    else
+                    {
+                        if ((i == 0) || (j == 0))
+                            num[i][j] = 1;
+                        else
+                            num[i][j] = 1 + num[i - 1][j - 1];
+
+                        if (num[i][j] > maxlen)
+                        {
+                            maxlen = num[i][j];
+                        }
+                    }
+                }
             }
 
-            return r / (n - 1);
+            var matchCount = num.Aggregate(0, (x, y) => x + y.Count(z => z > 13));
+
+            return matchCount;
         }
 
         /// <summary>
