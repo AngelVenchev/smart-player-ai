@@ -24,6 +24,14 @@ function register() {
         success: function (data) {
             getToken(email, password);
         },
+        error: function (e) {
+            if (e.status == 200) {
+                getToken(email, password);
+            }
+            else {
+                console.log("Error during registration!");
+            }
+        },
         dataType: "application/json"
     });
 }
