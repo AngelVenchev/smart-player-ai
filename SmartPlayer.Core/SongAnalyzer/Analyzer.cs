@@ -38,7 +38,7 @@ namespace SmartPlayer.Core.SongAnalyzer
 
                 longerArray = longerArray.Skip((longerArray.Length - shorterArray.Length) / 2).Take(shorterArray.Length).ToArray();
 
-                correlationCoefficients.Add(Pearson(shorterArray, longerArray)); // both are the same size
+                correlationCoefficients.Add(Pearson(shorterArray, longerArray) * 1000); // both are the same size
             }
             return correlationCoefficients;
         }
