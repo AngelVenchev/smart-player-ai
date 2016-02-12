@@ -16,17 +16,18 @@ namespace SmartPlayer.Data
     {
         public Song()
         {
-            this.UserSongVotes = new HashSet<UserSongVote>();
             this.CorrelationsAsPrimary = new HashSet<SongSongCorrelation>();
             this.CorrelationsAsSecondary = new HashSet<SongSongCorrelation>();
+            this.UserSongVotes = new HashSet<UserSongVote>();
         }
     
         public int Id { get; set; }
         public string Name { get; set; }
         public string Guid { get; set; }
+        public double Grade { get; set; }
     
-        public virtual ICollection<UserSongVote> UserSongVotes { get; set; }
         public virtual ICollection<SongSongCorrelation> CorrelationsAsPrimary { get; set; }
         public virtual ICollection<SongSongCorrelation> CorrelationsAsSecondary { get; set; }
+        public virtual ICollection<UserSongVote> UserSongVotes { get; set; }
     }
 }

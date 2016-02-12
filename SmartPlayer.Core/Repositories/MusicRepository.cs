@@ -46,7 +46,7 @@ namespace SmartPlayer.Core.Repositories
 
             var bestSongs = coeffsAsPrimary
                 .Union(coeffsAsSecondary)
-                .OrderByDescending(x => Math.Abs(x.Coefficient))
+                .OrderByDescending(x => x.Coefficient)
                 .Select(x => x.Song);
 
             return bestSongs.Take(10).ToList();
